@@ -69,7 +69,7 @@ var url = new URL(url_string);
 var googleid = url.searchParams.get("googleid");  
 var proxy = 'https://cors-anywhere.herokuapp.com/';
 var csvurl = proxy + 'https://docs.google.com/spreadsheets/d/e/' + googleid + '/pub?output=csv&range=A1:AZ9999';
-document.getElementById("display").innerHTML = 'Waiting to receive data from Google spreadsheet address:<br><small>'+ csvurl + '</small>';
+document.getElementById("display").innerHTML = 'Waiting to receive data from Google spreadsheet address using a proxy to avoid CORS troubles:<br><small>'+ csvurl + '</small>';
 
 
 // Some static settings
