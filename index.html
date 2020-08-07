@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<head>
+<meta charset="UTF-8"> 
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<!-- <script src="plotly-latest.min.js"></script> --> <!-- OPTIONAL for speedup, you can download plotly directly to this directory - and uncomment  --> 
+
+<script src="csvToArray.js"></script>
+<link rel="shortcut icon" href="favicon.png">
+<style type="text/css"> 
+	body  { font-family: sans; background:silver; }
+	td  { border:2px solid gray; padding:4px;  border-radius:10px; background:white; }
+	input { vertical-align:middle;  margin: -1px 3px; } 
+	label:hover { color: blue; background:#def; }
+	div.sep { border-top:2px solid #aaa; color: #666; background:#eee; margin-top:5px; } </style>
+</head>
+
+<body>
+<center><div id="display">Initializing...</div></center>
+
+<table align="center">
+<tr>
+	<td>					<div id="area" style="width:900px;height:900px;"></div> </td>
+	<td> <B>X axis</B><br> 	<div id="X axis parameter"></div> </td>
+	<td> <B>Y axis</B><br>	<div id="Y axis parameter"> </div> </td>
+	<td> <B>Color</B><br>	<div id="Color-coded parameter"> </div> </td>
+</tr>
+<tr>
+	<td> 
+		<input type="checkbox" id="xlog"		       	onclick="axes_update()"><label for="xlog">Logarithmic X axis</label><br>
+		<input type="checkbox" id="ylog"		       	onclick="axes_update()"><label for="ylog">Logarithmic Y axis</label><br>
+		<input type="checkbox" id="ids"			checked	onclick="axes_update()"><label for="ids">Annotate sample IDs</label><br>
+		<input type="checkbox" id="arrows"				onclick="axes_update()"><label for="arrows">Draw inheritance arrows <i>(experimental)</i></label><br>
+		<input type="checkbox" id="difflabels"			onclick="axes_update()"><label for="difflabels">Print inheritance differences <i>(experimental)</i></label><br>
+	</td>
+	<td colspan="3"> 
+		<b>Filter</b><br>
+		<select id="filter1combo" size=0 onchange='axes_update(this);'> <option title='-none-' value='-none-'>-none-</option> </select>
+		<select id="filter2combo" size=0 onchange='axes_update(this);'> 
+		 <option title='gt' value='gt'  onselect='axes_update(this);'>is greater than</option>
+		 <option title='eq' value='eq'  onselect='axes_update(this);'>is equal to</option>
+		 <option title='lt' value='lt'  onselect='axes_update(this);'>is less than</option>
+		</select>
+		<input type="text" id="filterparam" size=30 onchange='axes_update(this);'> 
+
+		<center>
+		<input type="checkbox" id="ancestry" onclick="axes_update()" disabled=1><label for="ancestry" title='to be added'>Include ancestry</label> &nbsp; &nbsp; &nbsp;
+		<input type="checkbox" id="descendants" onclick="axes_update()" disabled=1><label for="descendants" title='to be added'>Include descendants</label>
+		</center>
+	</td>
+</tr>
+</table>
+
+<center>  (c) Filip Dominec (2018-2020) using javascript, HTML, the great <a href="https://plot.ly">Plotly</a> library and <a href="https://docs.google.com/spreadsheets">google documents</a></br> To share your choice of axes and colors, copy the full path from your address bar.<br> To edit the data, ask for editing permissions for the underlying Google spreadsheet. <br> To make a new plot of your own data, <b><a href='./howto.html'>follow the howto</a></b>.  </center> 
+<script>
+
+
+/**
+ * JavaScript Get URL Parameter from https://www.kevinleary.net/javascript-get-url-parameters/
+ * 
+ * @param String prop The specific URL parameter you want to retreive the value for
+ * @return String|Object If prop is provided a string value is returned, otherwise an object of all properties is returned
+ */
+
+
+var url_string = window.location.href;
+var url = new URL(url_string);
+var googleid = url.searchParams.get("googleid");  
+var proxy = 'https://cors-anywhere.herokuapp.com/';
+var csvurl = proxy + 'https://docs.google.com/spreadsheets/d/e/' + googleid + '/pub?output=csv&range=A1:AZ9999';
+document.getElementById("display").innerHTML = 'Waiting to receive data from Google spreadsheet address:<br><small>'+ csvurl + '</small>';
+
+
+// Some static settings
+var defaultparam_x = url.searchParams.get("x");
+var defaultparam_y = url.searchParams.get("y");
+var defaultparam_c = url.searchParams.get("c");
+
+// Get the data from google table
+var raw_text_table = '(no table loaded yet)';
+xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function () {
+  if (xmlhttp.readyState == 4) {
+	  if (xmlhttp.status == 200){
+		  raw_text_table = xmlhttp.responseText;
+		  // raw_text_table = xmlhttp.response;
+	  } else {
+		  raw_text_table = 'Error - XMLHttpRequest returned wrong status, check your browsers error console for a hint. If this happens with the official example, consider reporting a bug.';
+		  // alert('Error getting XMLHttpRequest response, status = ' + xmlhttp.status);
+	  };
+  }
+};
+// document.getElementById("display").innerHTML = 'Waiting to receive data from Google docs...';
+xmlhttp.open("GET", csvurl, false);
+xmlhttp.send(null);				
+if (googleid==null)
+	document.getElementById("display").innerHTML = 'Error: Missing the google ID of the data spreadsheet. No data to show.<br> To start a new plot of your data <b><a href="./howto.html">follow the howto</a></b>' 
+else
+	document.getElementById("display").innerHTML = '' ;
+
+// DEBUG for offline mode only
+//var raw_text_table = 'See plotted ↣,,https://www.fzu.cz/~dominecf/xy/?googleid=2PACX-xyz&x=A%20exc%20JO%20100%25&y=A%20def%20JO%20100%25&c=QW%20number,,General,,,,GaN buffer technology,,,Quantum-barrier technology,,,,Quantum-well technology,,,,,,,QW-cap technology,,,PL Karla - fits by Robert,,,,,,,,,,,\n sample ID,letter,parent ID,what changed,growth date,days idle before,QW number,tags,TEGa used for buffer,N2 as buffer carrier gas,Buffer temperature,QB growth time,QB thickness,QB temperature,(QB TEGa_1 Q mol mol/min),QW growth time,QW thickness,QW temperature,QW TEGa_1 Q mol mol/min,QW TMIn_1 Q mol mol/min,QW In/III ratio,QW Graded,QW-cap growth time,QW-cap thickness,(QW-cap TEGa_1 Q mol mol/min),I_YB_(KK),I_BB28_(KK),I_BB29_(KK),I_DB_(KK),E_DB_(KK),rms_DB_(KK),I_QW_(KK),E_QW_(KK),rms_QW_(KK),I_FX_(KK),E_FX_(KK),rms_FX_(KK)\n ,,,,,,_,,"1 if TEGa, 0 if TMGa",1 if nitrogen 0 if hydrogen,°C,seconds,layer time x  TEGa_1 Q mol mol/min,°C,,seconds,layer time x  TEGa_1 Q mol mol/min,"°C\n ",,,,1=graduated and NaN=not graduated QW,seconds,layer time x  TEGa_1 Q mol mol/min,,intensity of yellow band (A.U.),intensity of the 1st blueband around 2.75 eV (A.U.),intensity of the 1st blueband around 2.9 eV (A.U.),intensity of the defect band (A.U.),mean energy of the defect band (eV),spectral width of the defect band (sq root of 2nd moment) (eV),intensity of the quantum well exciton emission (A.U),mean energy of the quantum well emission (eV),spectral width of the quantum well emission (eV),intensity of free exciton of GaN (A.U.),mean energy of the free exciton emission (eV),spectral width of free exciton emission (eV)\n 212,,198,,2018-09-19,8,10,,,,,2.40E+02,2.02E-03,980,8.40E-06,9.70E+01,5.53E-05,8.70E+02,5.70E-07,7.84E-06,9.32E-01,1,178,1.01E-04,5.70E-07,6.6695E-02,NaN,NaN,7.8446E-01,2.4811E+00,1.9935E-01,9.1330E-02,2.9843E+00,1.0855E-01,1.8326E-03,3.4040E+00,4.3995E-02\n 213,,129,"tenčí QWs a capping (QW 80 s, negradovaná, cap 2*QB)",2018-10-01,12,10,,,,,240,2.02E-03,9.80E+02,8.40E-06,80,4.56E-05,8.70E+02,5.70E-07,7.84E-06,0.9322681257,NaN,1.78E+02,1.01E-04,5.70E-07,5.4319E-08,NaN,NaN,1.5389E+00,2.4409E+00,2.0916E-01,1.4851E-01,2.9475E+00,1.0852E-01,1.3686E-03,3.3963E+00,3.0826E-02\n 214,,213,"QB 200 mbar, QW 400 mbar jako obvykle",2018-10-02,1,10,,,,,2.40E+02,2.02E-03,9.80E+02,8.40E-06,8.00E+01,4.56E-05,8.70E+02,5.70E-07,7.84E-06,9.32E-01,NaN,1.78E+02,1.01E-04,5.70E-07,6.8955E-02,NaN,NaN,1.5747E+00,2.4132E+00,1.9469E-01,9.6256E-02,2.9246E+00,1.3567E-01,3.4964E-03,3.3888E+00,4.2230E-02\n 215,,213,"QB 200 mbar, QW 600 mbar",2018-10-03,1,10,,,,,2.40E+02,2.02E-03,980,8.40E-06,8.00E+01,4.56E-05,8.70E+02,5.70E-07,7.84E-06,9.32E-01,NaN,178,1.01E-04,5.70E-07,2.7940E-07,NaN,NaN,1.2851E+00,2.3625E+00,1.9596E-01,5.4092E-02,2.8827E+00,1.5241E-01,3.8836E-03,3.3733E+00,5.9609E-02\n 216,,157,"delší rampa na QB, tenký capping",2018-10-04,1,10,,,,,252,2.12E-03,9.80E+02,8.40E-06,142,8.09E-05,8.70E+02,5.70E-07,7.84E-06,0.9322681257,NaN,NaN,NaN,NaN,1.1665E-01,NaN,NaN,1.4249E+00,2.4690E+00,1.9256E-01,1.2623E-01,2.9747E+00,1.1472E-01,1.6708E-03,3.4047E+00,3.2245E-02\n 217,,215,"T(QW)=890°C, pomalejší (In 80 + Ga 6 ml/min) a delší (110 s) růst QW",2018-10-09,5,10,,,,,2.40E+02,2.02E-03,9.80E+02,8.40E-06,1.10E+02,4.70E-05,8.90E+02,4.27E-07,6.27E-06,9.36E-01,NaN,1.78E+02,7.60E-05,4.27E-07,1.4273E-01,NaN,NaN,1.3527E+00,2.5717E+00,1.9902E-01,1.8912E-01,3.0794E+00,1.0696E-01,2.1776E-03,3.3955E+00,3.4568E-02\n 218,,124,1 nm QW cap s gradací průtoku TEGa z 8 na 118 ml/min,2018-10-16,7,10,,,,,2.40E+02,2.02E-03,980,8.40E-06,9.70E+01,5.53E-05,870,5.70E-07,7.84E-06,9.32E-01,1,NaN,NaN,NaN,5.7862E-02,NaN,NaN,7.5887E-01,2.3401E+00,1.9468E-01,2.5187E-02,2.8885E+00,1.8855E-01,3.2340E-03,3.3903E+00,5.4649E-02\n 219,,124,"QB 200 mbar, QW 600 mbar",2018-10-17,1,10,,,,,240,2.02E-03,9.80E+02,8.40E-06,97,5.53E-05,8.70E+02,5.70E-07,7.84E-06,0.9322681257,1,1.78E+02,1.01E-04,5.70E-07,6.4809E-02,NaN,NaN,1.8081E+00,2.4636E+00,1.9777E-01,2.5429E-01,2.9624E+00,1.0248E-01,2.7563E-03,3.3946E+00,4.1360E-02\n'
+//console.log('raw_text_table', raw_text_table);
+
+// Process the received CSV text into a column-wise dictionaries, keyed by the column name
+table = raw_text_table.csvToArray( {'rSep':'\n', 'fSep':',', 'trim':true} );
+function transpose(a) {
+    return Object.keys(a[0]).map(function(c) {
+        return a.map(function(r) { return r[c]; });
+    });
+}
+table = transpose(table);
+
+var alldata = {}
+var group = {}
+var note = {}
+for (col in table) {
+	// 0th row is (descriptive) grouping of columns
+	// 1st row is the real header
+	// 2nd row is (descriptive) comment for users
+	// 3rd+ rows are actual data
+	group[table[col][1]] = table[col][0];
+	alldata[table[col][1]] = table[col].slice(3);
+	note[table[col][1]] = table[col][2];
+}
+	
+// dynamic generator of radiobuttons for each sample parameter
+function addradio(divname, value, selkey, note)
+{
+    if (value == selkey) { checked="checked='checked'"; } else { checked = ""; };
+	if (value[0] != '(')
+	{
+		document.getElementById(divname).innerHTML = (document.getElementById(divname).innerHTML+ 
+			"<label title='"+note+"'><input type='radio' class='denser' value='" + 
+			value + "' name='" + divname + "' onclick='axes_update(this);' " + checked + 
+			" > <span class='denser'> " + value + "</div></label><br>");
+	}
+}
+function addseparator(divname, sepname)
+{
+    document.getElementById(divname).innerHTML = (document.getElementById(divname).innerHTML+ "<div class='sep'>" + sepname + "</div>");
+}
+function addcomboitem(comboname, value, disabled)
+{
+	//console.log(comboname, value);
+	var select = document.getElementById(comboname);
+	var option = document.createElement('option');
+	option.text = option.value = value;
+	option.disabled=disabled
+	select.add(option);
+}
+
+colcounter = 0;
+for (key in alldata) { 
+	if ((group[key] != '') && (colcounter>3)) {
+		addseparator('X axis parameter',	group[key]+':');
+		addseparator('Y axis parameter',	group[key]+':');
+		addseparator('Color-coded parameter', group[key]+':');
+		addcomboitem('filter1combo', '['+group[key]+']', true);
+	}
+	if (!(key.startsWith("_"))) {
+		addradio('X axis parameter',		key, defaultparam_x, note[key]);
+		addradio('Y axis parameter',		key, defaultparam_y, note[key]);
+		addradio('Color-coded parameter',	key, defaultparam_c, note[key]);
+		addcomboitem('filter1combo', key, false);
+	}
+	colcounter += 1;
+}
+
+
+var sample_points = {
+  x: [],
+  y: [],
+  text:[],
+  mode:'markers',
+  type:'scatter',
+  textposition:'bottom center',
+  marker: { size: 8, colorscale: [ 
+	  [0,'rgb(255,64,0)'], [0.1,'rgb(216,128,0)'], [0.2,'rgb(144,218,0)'], [0.4,'rgb(0,218,0)'],  
+	  [0.6,'rgb(0,128,255)'], [.8,'rgb(64, 0, 255)'], [1,'rgb(128, 0, 128)'], ] },
+};
+
+var sample_textlabels = {
+  x: [],
+  y: [],
+  text:[],
+  mode:'markers+text',
+  type:'scatter',
+  textposition:'bottom center',
+  marker: { size: 16, opacity:.2, colorscale: [ 
+	  [0,'rgb(255,64,0)'], [0.1,'rgb(216,128,0)'], [0.2,'rgb(144,218,0)'], [0.4,'rgb(0,218,0)'],  
+	  [0.6,'rgb(0,128,255)'], [.8,'rgb(64, 0, 255)'], [1,'rgb(128, 0, 128)'], ] },
+
+        showlegend: 0, // TODO: test
+        hoverinfo: 'none', // TODO: test
+};
+
+
+var sample_rels = { x: [], y: [], mode: 'lines', color: 'grey', type: 'scatter', };
+sample_rels = { }
+layout = { hovermode:'closest', showlegend: false, };
+Plotly.newPlot('area', [sample_points, sample_textlabels], layout);  // {responsive: true}
+
+function axes_update() {
+	// determine which parameters were selected by the user
+	function which_param(radios) { for (var i = 0, length = radios.length; i < length; i++) { if (radios[i].checked) { return radios[i].value; } } }
+	new_x_param = which_param(document.getElementsByName('X axis parameter'))
+	new_y_param = which_param(document.getElementsByName('Y axis parameter'))
+	new_c_param = which_param(document.getElementsByName('Color-coded parameter'))
+
+	// filter points (TODO)
+	filterby = document.getElementById('filter1combo').value;
+	filterop = document.getElementById('filter2combo').value;
+	filterlev = parseFloat(document.getElementById('filterparam').value);
+	console.log('filtering', filterby, filterop, filterlev)
+	if (filterby != '-none-') {
+		data = {}
+		for (key in alldata) {
+		  newarr = []
+		  counter = 0
+		  for (d in alldata[key]) {
+			if (((filterop == 'gt') && (alldata[filterby][counter] > filterlev)) || 
+					((filterop == 'eq') && (alldata[filterby][counter] == filterlev)) || 
+					((filterop == 'lt') && (alldata[filterby][counter] < filterlev))) {
+					// TODO include descendants
+					// TODO include ancestry
+				newarr.push(alldata[key][d])};
+				counter += 1;
+		  }
+		  data[key] = newarr;
+		} 
+	} else {
+		data = alldata;
+	}
+
+
+	// Update the text in the address bar
+	apparent_url = url_string.split("?")[0] + "?googleid=" + googleid + "&x=" + encodeURI(new_x_param) + 
+		"&y=" + encodeURI(new_y_param)+ "&c=" + encodeURI(new_c_param);
+	console.log("CHANGING URL TO " + apparent_url);
+	if (googleid!=null) history.pushState(null, '',  apparent_url);
+
+
+	// this longer text will not be plotted - it only shows when users hover the mouse above the point
+	hoverlabels = [];
+	for (id in data["sample ID"]) {
+		parent_index = data['parent ID'][id];
+		if (parent_index == -1) parentstr = "no parent" 
+		else {
+			parentstr = "parent " + parent_index ;
+			if (data['what changed'][id] == "") 
+				parentstr += " and is nominally identical to it"
+			else
+				parentstr += "; difference being <b>" +  data['what changed'][id] + "</b>";
+		}
+			
+
+		colorpar = data[new_c_param][id]
+		if (colorpar.trim() == "") colorpar = "no " + new_c_param + " value given" 
+		else colorpar = new_c_param + " = " + colorpar;
+
+		hoverlabels.push("<b>" + data['sample ID'][id] + "</b> with " + parentstr + " <br> and with " + colorpar )
+	}
+	sample_points['text'] 	= hoverlabels;
+
+	// this shorter text will be (optionally) plotted
+	if (document.getElementById("ids").checked == true)
+		sample_textlabels["text"] 	= data["sample ID"]
+	else
+		sample_textlabels["text"] 	= "";
+
+	// Load the actual sample data
+	//sample_points['x'] 	= [for (d of data[new_x_param]) parseFloat(d)];
+	//sample_points['y'] 	= [for (d of data[new_y_param]) parseFloat(d)];
+	sample_points['x'] 	= data[new_x_param].map(d => parseFloat(d));
+	sample_points['y'] 	= data[new_y_param].map(d => parseFloat(d));
+	sample_points["marker"]["color"] = data[new_c_param];
+	//console.log(sample_points['x'], sample_points['y']);
+	sample_textlabels['x'] 	= data[new_x_param];		// NOTE: may be responsible for labels possibly disappearing in log plots!
+	sample_textlabels['y'] 	= data[new_y_param];
+	sample_textlabels["marker"]["color"] = data[new_c_param];
+	Plotly.react('area', [sample_points, sample_textlabels, sample_rels]); 		// Replot new data and update axis labels
+
+	// prepare annotations etc. to be updated
+	layout.xaxis = {title: new_x_param};
+	layout.yaxis = {title: new_y_param};                                        
+	layout.annotations = [] 
+	for (i=0; i<data['sample ID'].length; i++) {
+		parent_index = data['sample ID'].indexOf(data['parent ID'][i].trim());
+		if (parent_index != -1)  {
+			//if (0) {
+			if (document.getElementById("xlog").checked == true) {
+				fromx = Math.log10(parseFloat(data[new_x_param][parent_index]));
+				tox   = Math.log10(parseFloat(data[new_x_param][i]));
+			} else {
+				fromx = parseFloat(data[new_x_param][parent_index]);
+				tox   = parseFloat(data[new_x_param][i]);
+			};
+
+			//if (0) {
+			if (document.getElementById("ylog").checked == true) {
+				fromy = Math.log10(parseFloat(data[new_y_param][parent_index])); 
+				toy   = Math.log10(parseFloat(data[new_y_param][i]));
+			} else {
+				fromy = parseFloat(data[new_y_param][parent_index]); 
+				toy   = parseFloat(data[new_y_param][i]);
+			}
+			diff = data['what changed'][i];
+			if ((!isNaN(fromx)) && (!isNaN(tox)) && (!isNaN(fromy)) && (!isNaN(toy))) {
+				//console.log('arrow is valid');
+				//console.log(parent_index, diff,fromx,fromy,tox,toy);
+				if (document.getElementById("difflabels").checked == true)
+					layout.annotations.push({ text: diff, showarrow: false, font: { size: 12 }, xref:'x', xanchor:'center', 
+							x:(fromx+tox)/2, yref:'y', yanchor:'center', y:(fromy+toy)/2 });
+				if (document.getElementById("arrows").checked == true)
+					layout.annotations.push({ axref:'x', ax: fromx,   aref:'x', x: tox,  ayref:'y', ay: fromy,  aref:'y', y: toy, 
+						arrowhead:5, arrowcolor:'rgb(0,0,0)', opacity:.3});
+			}
+		}	
+	}
+
+	// Log axes
+	if (document.getElementById("xlog").checked == true) layout.xaxis["type"]="log";
+	if (document.getElementById("ylog").checked == true) layout.yaxis["type"]="log";
+
+	Plotly.relayout('area', layout);
+};
+
+
+axes_update();
+</script>
+
+</body>
