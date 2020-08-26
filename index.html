@@ -8,6 +8,8 @@
 
 <script src="csvToArray.js"></script>
 <link rel="shortcut icon" href="favicon.png">
+
+<title>gsheet2plotly</title>
 <style type="text/css"> 
 	body  { font-family: sans; background:silver; }
 	td  { border:2px solid gray; padding:4px;  border-radius:10px; background:white; }
@@ -69,7 +71,7 @@ var url = new URL(url_string);
 var googleid = url.searchParams.get("googleid");  
 var proxy = 'https://cors-anywhere.herokuapp.com/';
 var csvurl = proxy + 'https://docs.google.com/spreadsheets/d/e/' + googleid + '/pub?output=csv&range=A1:AZ9999';
-document.getElementById("display").innerHTML = 'Waiting to receive data from Google spreadsheet address using a proxy to avoid CORS troubles:<br><small>'+ csvurl + '</small>';
+document.getElementById("display").innerHTML = 'gsheet2plotly waiting to receive data from Google spreadsheet address using a proxy to avoid CORS troubles:<br><small>'+ csvurl + '</small>';
 
 
 // Some static settings
