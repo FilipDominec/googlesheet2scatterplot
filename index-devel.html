@@ -14,6 +14,7 @@
 <style type="text/css"> 
 	body  { font-family: sans; background:silver; }
 	td  { border:2px solid gray; padding:4px;  border-radius:10px; background:white; }
+	td.cs  { border:0; padding:1px; font-size:80%; text-align:center; width=20percent;}
 	input { vertical-align:middle;  margin: -1px 3px; } 
 	label:hover { color: blue; background:#def; }
 	div.sep { border-top:2px solid #aaa; color: #666; background:#eee; margin-top:5px; } </style>
@@ -24,7 +25,12 @@
 
 <table align="center">
 <tr>
-	<td>					<div id="area" style="width:900px;height:900px;"></div> </td>
+	<td>					<div id="area" style="width:900px;height:900px;"></div>
+		<table style='td {padding}' border='0px' align='center'>
+			<tr><td class='cs' colspan='5'>color scale for&nbsp;<span id='displaycolorquant'></span>: </td></tr>
+			<tr><td class='cs'></td><td class='cs' colspan='3'><img src='my_colorscale_m.png' width='500px' height='5px'></td><td class='cs'></td></tr>
+			<tr><td class='cs' colspan='2'>min</td><td class='cs'>·</td><td class='cs' colspan='2'>max</td></tr>
+		</table>
 	<td> <B>X axis</B><br> 	<div id="X axis parameter"></div> </td>
 	<td> <B>Y axis</B><br>	<div id="Y axis parameter"> </div> </td>
 	<td> <B>Color</B><br>	<div id="Color-coded parameter"> </div> </td>
@@ -214,7 +220,8 @@ var sample_textlabels = {
 var sample_rels = { x: [], y: [], mode: 'lines', color: 'grey', type: 'scatter', };
 // sample_rels = { }
 layout = { hovermode:'closest', showlegend: false, };
-Plotly.newPlot('area', [sample_points, sample_textlabels], layout);  // {responsive: true}
+plot = Plotly.newPlot('area', [sample_points, sample_textlabels], layout);  // {responsive: true}
+console.log( Object.keys(plot) );
 
 function point_filter_partial(by,op,par, _data, i) {
 	filterby = document.getElementById(by).value;
@@ -237,7 +244,7 @@ function filter_points(_data, i) {
 	if (filtermode == "and") return (filter1 && filter2)
 	else if (filtermode == "or") return (filter1 || filter2);
 
-	console.log("FILTERING VALUES by ", filterby, filterop, filterpar, _data.indexOf(filterpar), 'RESULT', filter1);
+	// console.log("FILTERING VALUES by ", filterby, filterop, filterpar, _data.indexOf(filterpar), 'RESULT', filter1);
 	return filter1
 }
 
@@ -248,12 +255,13 @@ function axes_update() {
 	new_x_param = which_param(document.getElementsByName('X axis parameter'))
 	new_y_param = which_param(document.getElementsByName('Y axis parameter'))
 	new_c_param = which_param(document.getElementsByName('Color-coded parameter'))
+document.getElementById("displaycolorquant").innerHTML = new_c_param;
 
 	// filter points (TODO) THIS WORKS
 	filterby = document.getElementById('cmbFilterBy1').value;
 	filterop = document.getElementById('cmbFilterOp1').value;
 	filterlev = parseFloat(document.getElementById('edtFilterParam1').value);
-	console.log('filtering', filterby, filterop, filterlev)
+	// console.log('filtering', filterby, filterop, filterlev)
 	if (filterby != '(show all)') {
 		data = {}
 		for (key in alldata) {
