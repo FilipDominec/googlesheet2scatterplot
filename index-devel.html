@@ -18,6 +18,20 @@
 	input { vertical-align:middle;  margin: -1px 3px; } 
 	label:hover { color: blue; background:#def; }
 	div.sep { border-top:2px solid #aaa; color: #666; background:#eee; margin-top:5px; } </style>
+
+	@keyframes in {
+	  0% { transform: scaleY(0) ; opacity: .5; }
+	  100% { transform: scaleY(1) ; opacity: 1; visibility: visible; }
+	}
+	@keyframes out {
+	  0% { transform: scaleY(1) ; opacity: 1;  }
+	  100% { transform: scaleY(0) ; opacity: .5;  }
+	}
+
+	div.show { background: lime; transition: all 200ms ease-out; transform-origin: top center; animation: in 200ms ease both; }
+
+	div.hide { background: yellow; transform-origin: top center; animation: out 200ms ease both; max-height:0px; }
+
 </head>
 
 <body>
@@ -157,14 +171,35 @@ function addradio(divname, value, selkey, note)
 	}
 }
 
+function toggle_section(by_name){
+  console.log('TOGGLE VISIBILITY STUB', by_name);
+  for (hint_name of ['X']) {
+	  var hint = document.getElementById(by_name);
+	  console.log('   BEFORE', hint);
+
+	  hint.className = hint.className !== 'show' ? 'show' : 'hide';
+	  if (hint.className === 'show') {
+		  hint.style.display = 'block';
+	  } else {
+		setTimeout(function(){
+		  hint.style.display = 'none';
+		}, 200); // timed to match animation-duration
+	  }
+	  var hint = document.getElementById(by_name);
+	  console.log('   AFTER', hint);
+  };
+};
+
 function addseparator(divname, sepname)
 {
-    document.getElementById(divname).innerHTML = (document.getElementById(divname).innerHTML+ "<div class='sep'>" + sepname + "</div>");
+    document.getElementById(divname).innerHTML = (document.getElementById(divname).innerHTML+ '</div><div class="sep"  onclick="toggle_section(\'' + sepname + '\')">' + sepname + '</div><div id="' + sepname + '" class="show"> BABB');
 }
+
 
 function addcomboitem(comboname, value, disabled)
 {
 	//console.log(comboname, value);
+	//// TODO add the item modifying innerHTML of the latest added DIV 
 	var select = document.getElementById(comboname);
 	var option = document.createElement('option');
 	option.text = option.value = value;
@@ -351,7 +386,7 @@ document.getElementById("displaycolorquant").innerHTML = new_c_param;
 	// this longer text will not be plotted - it only shows when users hover the mouse above the point
 	hoverlabels = [];
 	for ([id, idx] of data["sample ID"].entries()) {
-		console.log("ID", id)
+		// console.log("ID", id)
 		parent_index = data['parent ID'][id];
 		if (parent_index == -1) parentstr = "no parent"  // TODO why -1 here?
 		else {
