@@ -159,19 +159,6 @@ for (col in table) {
 	alldata[table[col][1]] = table[col].slice(3);
 	note[table[col][1]] = table[col][2];
 }
-	
-// dynamic generator of radiobuttons for each sample parameter
-function addradio(divname, value, selkey, note)
-{
-    if (value == selkey) { checked="checked='checked'"; } else { checked = ""; };
-	if (value[0] != '(')
-	{
-		document.getElementById(divname).innerHTML = (document.getElementById(divname).innerHTML+ 
-			"<label title='"+note+"'><input type='radio' class='denser' value='" + 
-			value + "' name='" + divname + "' onclick='axes_update(this);' " + checked + 
-			" > <span class='denser'> " + value + "</span></label><br>");
-	}
-}
 
 function toggle_section(by_name){
   console.log('TOGGLE VISIBILITY STUB', by_name);
@@ -192,13 +179,30 @@ function toggle_section(by_name){
   };
 };
 
-function addseparator(divname, sepname)
+function addseparator(axisname, sepname)
 {
-    document.getElementById(divname).innerHTML = (document.getElementById(divname).innerHTML+ '</div><div class="sep"  onclick="toggle_section(\'' + sepname + '\')">' + sepname + '</div><div id="' + sepname + '" class="show"> BABB');
+    axis = document.getElementById(axisname)
+    axis.innerHTML = (axis.innerHTML+ 
+		'<div class="sep"  onclick="toggle_section(\'' + axisname + sepname + '\')">' + sepname + '</div>' + 
+		'<div id="' + axisname + sepname + '" class="hide"> TEST </div>');
 }
 
+	
+// dynamic generator of radiobuttons for each sample parameter
+function addradio(axisname, sepname, optionname, selkey, note)
+{
+    if (optionname == selkey) { checked="checked='checked'"; } else { checked = ""; };
+	if (optionname[0] != '(')
+	{
+		document.getElementById(axisname+sepname).innerHTML = (document.getElementById(axisname+sepname).innerHTML+ 
+			"<label title='"+note+"'><input type='radio' class='denser' value='" + 
+			optionname + "' name='" + axisname + "' onclick='axes_update(this);' " + checked + 
+			" > <span class='denser'> " + optionname + "</span></label><br>");
+	}
+}
 
-function addcomboitem(comboname, value, disabled)
+// for filtering
+function addcomboitem(comboname, value, disabled)  
 {
 	//console.log(comboname, value);
 	//// TODO add the item modifying innerHTML of the latest added DIV 
@@ -210,18 +214,20 @@ function addcomboitem(comboname, value, disabled)
 }
 
 colcounter = 0;
+sepname = ""; // initially, radiobuttons are added without belonging to any separator
 for (key in alldata) { 
 	if ((group[key] != '') && (colcounter>3)) {
-		addseparator('X axis parameter',	group[key]+':');
-		addseparator('Y axis parameter',	group[key]+':');
-		addseparator('Color-coded parameter', group[key]+':');
+		sepname = group[key]+':'
+		addseparator('X axis parameter',	sepname);
+		addseparator('Y axis parameter',	sepname);
+		addseparator('Color-coded parameter', sepname);
 		addcomboitem('cmbFilterBy1', '['+group[key]+']', true);
 		addcomboitem('cmbFilterBy2', '['+group[key]+']', true);
 	}
 	if (!(key.startsWith("_"))) {   // table columns named with leading underscore are hidden
-		addradio('X axis parameter',		key, url.searchParams.get("x"), note[key]);
-		addradio('Y axis parameter',		key, url.searchParams.get("y"), note[key]);
-		addradio('Color-coded parameter',	key, url.searchParams.get("c"), note[key]);
+		addradio('X axis parameter',	  sepname, key, url.searchParams.get("x"), note[key]);
+		addradio('Y axis parameter',	  sepname, key, url.searchParams.get("y"), note[key]);
+		addradio('Color-coded parameter', sepname, key, url.searchParams.get("c"), note[key]);
 		addcomboitem('cmbFilterBy1', key, false);
 		addcomboitem('cmbFilterBy2', key, false);
 	}
