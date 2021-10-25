@@ -10,15 +10,18 @@
 <script src="csvToArray.js"></script>
 <link rel="shortcut icon" href="favicon.png">
 
-<title>gsheet2plotly DEVELOPMENT VERSION</title>
+<title>gsheet2plotly DEVELOPMENT VERSION 2</title>
 <style type="text/css"> 
 	body  { font-family: sans; background:silver; }
 	td  { border:2px solid gray; padding:4px;  border-radius:10px; background:white; }
 	td.cs  { border:0; padding:1px; font-size:80%; text-align:center; width=20percent;}
 	input { vertical-align:middle;  margin: -1px 3px; } 
 	label:hover { color: blue; background:#def; }
-	div.sep { border-top:2px solid #aaa; color: #666; background:#eee; margin-top:5px; } 
+	div.sep { border-top:2px solid #aaa; color: #444; background:#eee; margin-top:5px; } 
 	div.sep:hover { color: blue; background:#bcf; } 
+
+	div.sepnew { border-top:2px solid #8f8; color: #444; background:#bfb; margin-top:5px; } 
+	div.sepnew:hover { color: blue; background:#bcf; } 
 
 	@keyframes in { 0% { transform: scaleY(0) ; } 100% { transform: scaleY(1) ; visibility: visible; } }
 	@keyframes out { 0% { transform: scaleY(1) ;  } 100% { transform: scaleY(0) ; } }
@@ -136,6 +139,8 @@ if (googleid==null)
 else
 	document.getElementById("display").innerHTML = '' ;
 
+
+
 // Process the received CSV text into a column-wise dictionaries, keyed by the column name
 table = raw_text_table.csvToArray( {'rSep':'\n', 'fSep':',', 'trim':true} );
 function transpose(a) {
@@ -178,8 +183,10 @@ function addseparator(axisname, sectname)
 {
     axis = document.getElementById(axisname)
 	// will be later filled with radiobuttons
+	cssclass = (sectname.slice(-2) !== '*:') ? 'sep' : 'sepnew';
+	console.log("cssclass",cssclass);
     axis.innerHTML = (axis.innerHTML+ 
-		'<div class="sep"  onclick="toggle_section(\'' + axisname + splitter + sectname + '\')">' + sectname + '</div>' + 
+		'<div class="' + cssclass + '"  onclick="toggle_section(\'' + axisname + splitter + sectname + '\')">' + sectname + '</div>' + 
 		'<div id="' + axisname +  splitter + sectname + '" class="hide"></div>');
 }
 
@@ -237,6 +244,15 @@ for (key in alldata) {
 	colcounter += 1;
 }
 
+
+document.getElementById("xlog").checked = (url.searchParams.get("xlog") == '1' ? true : false );
+document.getElementById("ylog").checked = (url.searchParams.get("ylog") == '1' ? true : false );
+document.getElementById("ids").checked = (url.searchParams.get("ids") == '1' ? true : false );
+document.getElementById("arrows").checked = (url.searchParams.get("arrows") == '1' ? true : false );
+document.getElementById("difflabels").checked = (url.searchParams.get("difflabels") == '1' ? true : false );
+
+
+
 my_colorscale = [[0,'rgb(255,64,0)'], [0.1,'rgb(216,128,0)'], [0.2,'rgb(144,218,0)'], [0.4,'rgb(0,218,0)'],  
 	  [0.6,'rgb(0,128,255)'], [.8,'rgb(64, 0, 255)'], [1,'rgb(128, 0, 128)'], ]
 
@@ -258,7 +274,7 @@ var sample_textlabels = {
   type:'scatter',
   textposition:'bottom center',
   marker: { size: 16, opacity:.2, colorscale: my_colorscale },
-  showlegend: 0, // TODO: test
+  showlegend: 0, 
   hoverinfo: 'none', // TODO: test
 };
 
@@ -388,8 +404,17 @@ function axes_update() {
 
 
 	// Update the text in the address bar
-	apparent_url = url_string.split("?")[0] + "?googleid=" + googleid + "&x=" + encodeURI(new_x_param) + 
-		"&y=" + encodeURI(new_y_param)+ "&c=" + encodeURI(new_c_param); // XXX add filters and axes settings
+	apparent_url = url_string.split("?")[0] + 
+			"?googleid=" + googleid + 
+			"&x=" + encodeURI(new_x_param) + 
+			"&y=" + encodeURI(new_y_param) + 
+			"&c=" + encodeURI(new_c_param) + 
+			(document.getElementById("xlog").checked ? '&xlog=1' : '') + 
+			(document.getElementById("ylog").checked ? '&ylog=1' : '') + 
+			"&ids=" + (document.getElementById("ids").checked ? '1' : '0') + 
+			(document.getElementById("arrows").checked ? '&arrows=1' : '') + 
+			(document.getElementById("difflabels").checked ? '&difflabels=1' : ''); 
+			; // XXX add filters and axes settings
 	console.log("CHANGING URL TO " + apparent_url);
 	if (googleid!=null) history.pushState(null, '',  apparent_url);
 
