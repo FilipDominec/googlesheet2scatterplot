@@ -158,36 +158,41 @@ for (col in table) {
 	note[table[col][1]] = table[col][2];
 }
 
+splitter = '&&&'
+axisnames = ['X axis parameter', 'Y axis parameter', 'Color-coded parameter']
+
 function toggle_section(by_name){
-  console.log('TOGGLE VISIBILITY STUB', by_name);
-  for (hint_name of ['X']) {
-	  var hint = document.getElementById(by_name);
-	  hint.className = (hint.className !== 'show' ? 'show' : 'hide');
-	  if (hint.className === 'show') {
-		  hint.style.display = 'block';
+  sectname = by_name.split(splitter)[1]
+  for (axisname of axisnames) {
+	  var sect = document.getElementById(axisname + splitter + sectname);
+	  sect.className = (sect.className !== 'show' ? 'show' : 'hide');
+	  if (sect.className === 'show') {
+		  sect.style.display = 'block';
 	  } else {
-		setTimeout(function(){ hint.style.display = 'none'; }, 100); 
+		setTimeout(function(){ sect.style.display = 'none'; }, 100); 
 	  }
   };
 };
 
-function addseparator(axisname, sepname)
+function addseparator(axisname, sectname)
 {
     axis = document.getElementById(axisname)
 	// will be later filled with radiobuttons
     axis.innerHTML = (axis.innerHTML+ 
-		'<div class="sep"  onclick="toggle_section(\'' + axisname + sepname + '\')">' + sepname + '</div>' + 
-		'<div id="' + axisname + sepname + '" class="hide"></div>');
+		'<div class="sep"  onclick="toggle_section(\'' + axisname + splitter + sectname + '\')">' + sectname + '</div>' + 
+		'<div id="' + axisname +  splitter + sectname + '" class="hide"></div>');
 }
 
 	
 // dynamic generator of radiobuttons for each sample parameter
-function addradio(axisname, sepname, optionname, selkey, note)
+function addradio(axisname, sectname, optionname, selkey, note)
 {
     if (optionname == selkey) { checked="checked='checked'"; } else { checked = ""; };
 	if (optionname[0] != '(')
 	{
-		document.getElementById(axisname+sepname).innerHTML = (document.getElementById(axisname+sepname).innerHTML+ 
+		divname = sectname ? (axisname + splitter + sectname) : axisname; // allow adding items above 1st section
+		div = document.getElementById(divname);
+		div.innerHTML = (div.innerHTML+ 
 			"<label title='"+note+"'><input type='radio' class='denser' value='" + 
 			optionname + "' name='" + axisname + "' onclick='axes_update(this);' " + checked + 
 			" > <span class='denser'> " + optionname + "</span></label><br>");
@@ -205,20 +210,20 @@ function addcomboitem(comboname, value, disabled)
 }
 
 colcounter = 0; // cells A1, A2, A3 are not for separators, but user notes
-sepname = ""; // initially, radiobuttons are added without belonging to any separator
+sectname = ""; // initially, radiobuttons are added without belonging to any separator
 for (key in alldata) { 
 	if ((group[key] != '') && (colcounter>3)) {
-		sepname = group[key]+':'
-		addseparator('X axis parameter',	sepname);
-		addseparator('Y axis parameter',	sepname);
-		addseparator('Color-coded parameter', sepname);
+		sectname = group[key]+':';
+		for (axisname of axisnames) { 
+			addseparator(axisname,	sectname);
+		};
 		addcomboitem('cmbFilterBy1', '['+group[key]+']', true);
 		addcomboitem('cmbFilterBy2', '['+group[key]+']', true);
 	}
 	if (!(key.startsWith("_"))) {   // table columns named with leading underscore are hidden
-		addradio('X axis parameter',	  sepname, key, url.searchParams.get("x"), note[key]);
-		addradio('Y axis parameter',	  sepname, key, url.searchParams.get("y"), note[key]);
-		addradio('Color-coded parameter', sepname, key, url.searchParams.get("c"), note[key]);
+		addradio('X axis parameter',	  sectname, key, url.searchParams.get("x"), note[key]);
+		addradio('Y axis parameter',	  sectname, key, url.searchParams.get("y"), note[key]);
+		addradio('Color-coded parameter', sectname, key, url.searchParams.get("c"), note[key]);
 		addcomboitem('cmbFilterBy1', key, false);
 		addcomboitem('cmbFilterBy2', key, false);
 	}
@@ -289,7 +294,7 @@ function axes_update() {
 	new_x_param = which_param(document.getElementsByName('X axis parameter'))
 	new_y_param = which_param(document.getElementsByName('Y axis parameter'))
 	new_c_param = which_param(document.getElementsByName('Color-coded parameter'))
-document.getElementById("displaycolorquant").innerHTML = new_c_param;
+	document.getElementById("displaycolorquant").innerHTML = new_c_param;
 
 	// filter points (TODO) THIS WORKS
 	filterby = document.getElementById('cmbFilterBy1').value;
