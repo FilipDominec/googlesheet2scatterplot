@@ -192,6 +192,13 @@ function addradio(axisname, sectname, optionname, selkey, note)
 	{
 		divname = sectname ? (axisname + splitter + sectname) : axisname; // allow adding items above 1st section
 		div = document.getElementById(divname);
+		if (sectname && checked) {
+			for (eachaxis of axisnames) {
+				console.log(axisname);
+				console.log(eachaxis+splitter+sectname);
+				document.getElementById(eachaxis+splitter+sectname).className = 'show';
+			}
+		}
 		div.innerHTML = (div.innerHTML+ 
 			"<label title='"+note+"'><input type='radio' class='denser' value='" + 
 			optionname + "' name='" + axisname + "' onclick='axes_update(this);' " + checked + 
