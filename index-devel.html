@@ -17,7 +17,7 @@
 	td.cs  { border:0; padding:1px; font-size:80%; text-align:center; width=20percent;}
 	input { vertical-align:middle;  margin: -1px 3px; } 
 	label:hover { color: blue; background:#def; }
-	div.sep { border-top:2px solid #aaa; color: #666; background:#eee; margin-top:5px; } </style>
+	div.sep { border-top:2px solid #aaa; color: #666; background:#eee; margin-top:5px; } 
 
 	@keyframes in {
 	  0% { transform: scaleY(0) ; opacity: .5; }
@@ -31,6 +31,8 @@
 	div.show { background: lime; transition: all 200ms ease-out; transform-origin: top center; animation: in 200ms ease both; }
 
 	div.hide { background: yellow; transform-origin: top center; animation: out 200ms ease both; max-height:0px; }
+
+</style>
 
 </head>
 
@@ -167,7 +169,7 @@ function addradio(divname, value, selkey, note)
 		document.getElementById(divname).innerHTML = (document.getElementById(divname).innerHTML+ 
 			"<label title='"+note+"'><input type='radio' class='denser' value='" + 
 			value + "' name='" + divname + "' onclick='axes_update(this);' " + checked + 
-			" > <span class='denser'> " + value + "</div></label><br>");
+			" > <span class='denser'> " + value + "</span></label><br>");
 	}
 }
 
