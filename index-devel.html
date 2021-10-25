@@ -19,18 +19,10 @@
 	label:hover { color: blue; background:#def; }
 	div.sep { border-top:2px solid #aaa; color: #666; background:#eee; margin-top:5px; } 
 
-	@keyframes in {
-	  0% { transform: scaleY(0) ; opacity: .5; }
-	  100% { transform: scaleY(1) ; opacity: 1; visibility: visible; }
-	}
-	@keyframes out {
-	  0% { transform: scaleY(1) ; opacity: 1;  }
-	  100% { transform: scaleY(0) ; opacity: .5;  }
-	}
-
-	div.show { background: lime; transition: all 200ms ease-out; transform-origin: top center; animation: in 200ms ease both; }
-
-	div.hide { background: yellow; transform-origin: top center; animation: out 200ms ease both; max-height:0px; }
+	@keyframes in { 0% { transform: scaleY(0) ; } 100% { transform: scaleY(1) ; visibility: visible; } }
+	@keyframes out { 0% { transform: scaleY(1) ;  } 100% { transform: scaleY(0) ; } }
+	div.show { transition: all 100ms ease-out; transform-origin: top center; animation: in 100ms ease both; }
+	div.hide { transform-origin: top center; animation: out 100ms ease both; max-height:0px; }
 
 </style>
 
@@ -47,51 +39,56 @@
 			<tr><td class='cs'></td><td class='cs' colspan='3'><img src='my_colorscale_m.png' width='500px' height='5px'></td><td class='cs'></td></tr>
 			<tr><td class='cs' colspan='2'>min</td><td class='cs'>·</td><td class='cs' colspan='2'>max</td></tr>
 		</table>
-	<td> <B>X axis</B><br> 	<div id="X axis parameter"></div> </td>
-	<td> <B>Y axis</B><br>	<div id="Y axis parameter"> </div> </td>
-	<td> <B>Color</B><br>	<div id="Color-coded parameter"> </div> </td>
+	<td valign="top"> <B>X axis</B><br> <div id="X axis parameter"></div> </td>
+	<td valign="top"> <B>Y axis</B><br>	<div id="Y axis parameter"></div> </td>
+	<td valign="top"> <B>Color</B><br>	<div id="Color-coded parameter"> </div> </td>
 </tr>
 <tr>
 	<td> 
 		<input type="checkbox" id="xlog"		       	onclick="axes_update()"><label for="xlog">Logarithmic X axis</label><br>
 		<input type="checkbox" id="ylog"		       	onclick="axes_update()"><label for="ylog">Logarithmic Y axis</label><br>
 		<input type="checkbox" id="ids"			checked	onclick="axes_update()"><label for="ids">Annotate sample IDs</label><br>
-		<input type="checkbox" id="arrows"				onclick="axes_update()"><label for="arrows">Draw inheritance arrows <i>(experimental)</i></label><br>
-		<input type="checkbox" id="difflabels"			onclick="axes_update()"><label for="difflabels">Print inheritance differences <i>(experimental)</i></label><br>
+		<input type="checkbox" id="arrows"				onclick="axes_update()"><label for="arrows">Draw inheritance arrows</label><br>
+		<input type="checkbox" id="difflabels"			onclick="axes_update()"><label for="difflabels">Print inheritance differences</label><br>
 	</td>
 	<td colspan="3"> 
 		<b>Filter</b><br>
 		<select id="cmbFilterBy1" size=0 onchange='axes_update(this);'> <option title='(show all)' value='(show all)'>(show all)</option> </select> 
 		<select id="cmbFilterOp1" size=0 onchange='axes_update(this);'> 
-		 <option title='gt' value='gt'  onselect='axes_update(this);'>is greater than</option>
-		 <option title='eq' value='eq'  onselect='axes_update(this);'>is equal to</option>
-		 <option title='lt' value='lt'  onselect='axes_update(this);'>is less than</option>
-		 <option title='contains' value='contains'  onselect='axes_update(this);'>string contains</option>
-		 <option title='notcontains' value='notcontains'  onselect='axes_update(this);'>string does not contain</option>
+			<option title='gt' value='gt'  onselect='axes_update(this);'>is greater than</option>
+			<option title='eq' value='eq'  onselect='axes_update(this);'>is equal to</option>
+			<option title='lt' value='lt'  onselect='axes_update(this);'>is less than</option>
+			<option title='contains' value='contains'  onselect='axes_update(this);'>string contains</option>
+			<option title='notcontains' value='notcontains'  onselect='axes_update(this);'>string does not contain</option>
 		</select>
 		<input type="text" id="edtFilterParam1" size=30 onchange='axes_update(this);'> <br>
 		
 		<center>
 		<select id="cmbFilterAndOr" size=0 onchange='axes_update(this);'> 
-		 <option title='and' value='and'  onselect='axes_update(this);'>and simultaneously</option>
-		 <option title='or' value='or'  onselect='axes_update(this);'>or</option>
+			<option title='and' value='and'  onselect='axes_update(this);'>and simultaneously</option>
+			<option title='or' value='or'  onselect='axes_update(this);'>or</option>
 		</select>
 		</center>
 
-		<select id="cmbFilterBy2" size=0 onchange='axes_update(this);'> <option title='(show all)' value='(show all)'>(show all)</option> </select>
+		<select id="cmbFilterBy2" size=0 onchange='axes_update(this);'>
+			<option title='(show all)' value='(show all)'>(show all)</option> </select>
 		<select id="cmbFilterOp2" size=0 onchange='axes_update(this);'> 
-		 <option title='gt' value='gt'  onselect='axes_update(this);'>is greater than</option>
-		 <option title='eq' value='eq'  onselect='axes_update(this);'>is equal to</option>
-		 <option title='lt' value='lt'  onselect='axes_update(this);'>is less than</option>
-		 <option title='contains' value='contains'  onselect='axes_update(this);'>string contains</option>
-		 <option title='notcontains' value='notcontains'  onselect='axes_update(this);'>string does not contain</option>
+			<option title='gt' value='gt'  onselect='axes_update(this);'>is greater than</option>
+			<option title='eq' value='eq'  onselect='axes_update(this);'>is equal to</option>
+			<option title='lt' value='lt'  onselect='axes_update(this);'>is less than</option>
+			<option title='contains' value='contains'  onselect='axes_update(this);'>string contains</option>
+			<option title='notcontains' value='notcontains'  onselect='axes_update(this);'>string does not contain</option>
 		</select>
 		<input type="text" id="edtFilterParam2" size=30 onchange='axes_update(this);'> 
 		<hr>
 
 		<center>
-		<input type="checkbox" id="ancestry" onclick="axes_update(this)"><label for="ancestry" title='show also all points that are (parents of)ᴺ any shown point'>Include ancestry</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-		<input type="checkbox" id="descendants" onclick="axes_update(this)"><label for="descendants" title='show also all points which any shown point is (parent of)ᴺ'>Include descendants</label>
+		<input type="checkbox" id="ancestry" onclick="axes_update(this)">
+			<label for="ancestry" title='show also all points that are (parents of)ᴺ any shown point'>
+			Include ancestry</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+		<input type="checkbox" id="descendants" onclick="axes_update(this)">
+			<label for="descendants" title='show also all points which any shown point is (parent of)ᴺ'>
+			Include descendants</label>
 		</center>
 	</td>
 </tr>
@@ -164,27 +161,22 @@ function toggle_section(by_name){
   console.log('TOGGLE VISIBILITY STUB', by_name);
   for (hint_name of ['X']) {
 	  var hint = document.getElementById(by_name);
-	  console.log('   BEFORE', hint);
-
-	  hint.className = hint.className !== 'show' ? 'show' : 'hide';
+	  hint.className = (hint.className !== 'show' ? 'show' : 'hide');
 	  if (hint.className === 'show') {
 		  hint.style.display = 'block';
 	  } else {
-		setTimeout(function(){
-		  hint.style.display = 'none';
-		}, 200); // timed to match animation-duration
+		setTimeout(function(){ hint.style.display = 'none'; }, 100); 
 	  }
-	  var hint = document.getElementById(by_name);
-	  console.log('   AFTER', hint);
   };
 };
 
 function addseparator(axisname, sepname)
 {
     axis = document.getElementById(axisname)
+	// will be later filled with radiobuttons
     axis.innerHTML = (axis.innerHTML+ 
 		'<div class="sep"  onclick="toggle_section(\'' + axisname + sepname + '\')">' + sepname + '</div>' + 
-		'<div id="' + axisname + sepname + '" class="hide"> TEST </div>');
+		'<div id="' + axisname + sepname + '" class="hide"></div>');
 }
 
 	
@@ -204,8 +196,6 @@ function addradio(axisname, sepname, optionname, selkey, note)
 // for filtering
 function addcomboitem(comboname, value, disabled)  
 {
-	//console.log(comboname, value);
-	//// TODO add the item modifying innerHTML of the latest added DIV 
 	var select = document.getElementById(comboname);
 	var option = document.createElement('option');
 	option.text = option.value = value;
@@ -213,7 +203,7 @@ function addcomboitem(comboname, value, disabled)
 	select.add(option);
 }
 
-colcounter = 0;
+colcounter = 0; // cells A1, A2, A3 are not for separators, but user notes
 sepname = ""; // initially, radiobuttons are added without belonging to any separator
 for (key in alldata) { 
 	if ((group[key] != '') && (colcounter>3)) {
