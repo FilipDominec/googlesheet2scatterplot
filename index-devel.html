@@ -49,11 +49,11 @@
 </tr>
 <tr>
 	<td> 
-		<input type="checkbox" id="xlog"		       	onclick="axes_update()"><label for="xlog">Logarithmic X axis</label><br>
-		<input type="checkbox" id="ylog"		       	onclick="axes_update()"><label for="ylog">Logarithmic Y axis</label><br>
-		<input type="checkbox" id="noids"			checked	onclick="axes_update()"><label for="ids">Hide sample IDs</label><br>
-		<input type="checkbox" id="arrows"				onclick="axes_update()"><label for="arrows">Draw inheritance arrows</label><br>
-		<input type="checkbox" id="difflabels"			onclick="axes_update()"><label for="difflabels">Print inheritance differences</label><br>
+		<input type="checkbox" id="xlog"		onclick="axes_update()"><label for="xlog">Logarithmic X axis</label><br>
+		<input type="checkbox" id="ylog"		onclick="axes_update()"><label for="ylog">Logarithmic Y axis</label><br>
+		<input type="checkbox" id="noids"		onclick="axes_update()"><label for="noids">Hide sample IDs</label><br>
+		<input type="checkbox" id="arrows"		onclick="axes_update()"><label for="arrows">Draw inheritance arrows</label><br>
+		<input type="checkbox" id="difflabels"	onclick="axes_update()"><label for="difflabels">Print inheritance differences</label><br>
 	</td>
 	<td colspan="3"> 
 		<b>Filter</b><br>
@@ -115,7 +115,7 @@ var url = new URL(url_string);
 var googleid = url.searchParams.get("googleid");  
 //window.googleDocCallback = function () { return true; };
 //var csvurl = proxy + 'https://docs.google.com/spreadsheets/d/e/' + googleid + '/pub?output=csv&range=A1:ZZ9999&callback=googleDocCallback';
-var csvurl = 'https://docs.google.com/spreadsheets/d/e/' + googleid + '/pub?output=csv&range=A1:AZ9999'; // XXX
+var csvurl = 'https://docs.google.com/spreadsheets/d/e/' + googleid + '/pub?output=csv&range=A1:AP100'; // XXX
 document.getElementById("display").innerHTML = 'gsheet2plotly waiting to receive data from Google spreadsheet address:<br><small>'+ csvurl + '</small>';
 
 
@@ -507,7 +507,6 @@ function axes_update() {
 
 	Plotly.relayout('area', layout);
 };
-
 
 axes_update();
 </script>
