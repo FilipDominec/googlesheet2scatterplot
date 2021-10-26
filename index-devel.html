@@ -37,7 +37,8 @@
 
 <table align="center">
 <tr>
-	<td>					<div id="area" style="width:900px;height:900px;"></div>
+	<td>
+		<div id="area" style="width:900px;height:900px;"></div>
 		<table style='td {padding}' border='0px' align='center'>
 			<tr><td class='cs' colspan='5'>color scale for&nbsp;<span id='displaycolorquant'></span>: </td></tr>
 			<tr><td class='cs'></td><td class='cs' colspan='3'><img src='my_colorscale_m.png' width='500px' height='5px'></td><td class='cs'></td></tr>
@@ -102,24 +103,19 @@
 <script>
 
 
-/**
- * JavaScript Get URL Parameter from https://www.kevinleary.net/javascript-get-url-parameters/
- * 
- * @param String prop The specific URL parameter you want to retreive the value for
- * @return String|Object If prop is provided a string value is returned, otherwise an object of all properties is returned
- */
-
+/********************************************************************************
+ * Getting and preprocessing the data from google table
+ ********************************************************************************/
 
 var url_string = window.location.href;
 var url = new URL(url_string);
 var googleid = url.searchParams.get("googleid");  
-//window.googleDocCallback = function () { return true; };
+//window.googleDocCallback = function () { return true; }; // might help with cross-site troubles?
 //var csvurl = proxy + 'https://docs.google.com/spreadsheets/d/e/' + googleid + '/pub?output=csv&range=A1:ZZ9999&callback=googleDocCallback';
-var csvurl = 'https://docs.google.com/spreadsheets/d/e/' + googleid + '/pub?output=csv&range=A1:AP100'; // XXX
+var csvurl = 'https://docs.google.com/spreadsheets/d/e/' + googleid + '/pub?output=csv&range=A1:AP165'; // XXX
 document.getElementById("display").innerHTML = 'gsheet2plotly waiting to receive data from Google spreadsheet address:<br><small>'+ csvurl + '</small>';
 
 
-// Get the data from google table
 var raw_text_table = '(no table loaded yet)';
 xmlhttp = new XMLHttpRequest();
 xmlhttp.onreadystatechange = function () {
@@ -163,6 +159,11 @@ for (col in table) {
 	note[table[col][1]] = table[col][2];
 }
 
+
+/********************************************************************************
+ * Building and User interaction of the right panel (i.e. axis choice)
+ ********************************************************************************/
+
 splitter = '&&&'
 axisnames = ['X axis parameter', 'Y axis parameter', 'Color-coded parameter']
 
@@ -181,28 +182,22 @@ function toggle_section(by_name){
 
 function addseparator(axisname, sectname)
 {
-    axis = document.getElementById(axisname)
-	// will be later filled with radiobuttons
+    axis = document.getElementById(axisname)	// will be later filled with radiobuttons
 	cssclass = (sectname.slice(-2) !== '*:') ? 'sep' : 'sepnew';
-	console.log("cssclass",cssclass);
     axis.innerHTML = (axis.innerHTML+ 
 		'<div class="' + cssclass + '"  onclick="toggle_section(\'' + axisname + splitter + sectname + '\')">' + sectname + '</div>' + 
 		'<div id="' + axisname +  splitter + sectname + '" class="hide"></div>');
 }
 
-	
 // dynamic generator of radiobuttons for each sample parameter
 function addradio(axisname, sectname, optionname, selkey, note)
 {
     if (optionname == selkey) { checked="checked='checked'"; } else { checked = ""; };
-	if (optionname[0] != '(')
-	{
+	if (optionname[0] != '(') {
 		divname = sectname ? (axisname + splitter + sectname) : axisname; // allow adding items above 1st section
 		div = document.getElementById(divname);
 		if (sectname && checked) {
 			for (eachaxis of axisnames) {
-				console.log(axisname);
-				console.log(eachaxis+splitter+sectname);
 				document.getElementById(eachaxis+splitter+sectname).className = 'show';
 			}
 		}
@@ -245,6 +240,10 @@ for (key in alldata) {
 }
 
 
+/********************************************************************************
+ * Updating user settings from URL
+ ********************************************************************************/
+
 document.getElementById("xlog").checked = (url.searchParams.get("xlog") == '1' ? true : false );
 document.getElementById("ylog").checked = (url.searchParams.get("ylog") == '1' ? true : false );
 document.getElementById("noids").checked = (url.searchParams.get("noids") == '1' ? true : false );
@@ -252,6 +251,9 @@ document.getElementById("arrows").checked = (url.searchParams.get("arrows") == '
 document.getElementById("difflabels").checked = (url.searchParams.get("difflabels") == '1' ? true : false );
 
 
+/********************************************************************************
+ * (Re)plotting the data
+ ********************************************************************************/
 
 my_colorscale = [[0,'rgb(255,64,0)'], [0.1,'rgb(216,128,0)'], [0.2,'rgb(144,218,0)'], [0.4,'rgb(0,218,0)'],  
 	  [0.6,'rgb(0,128,255)'], [.8,'rgb(64, 0, 255)'], [1,'rgb(128, 0, 128)'], ]
@@ -280,10 +282,8 @@ var sample_textlabels = {
 
 
 var sample_rels = { x: [], y: [], mode: 'lines', color: 'grey', type: 'scatter', };
-// sample_rels = { }
-layout = { hovermode:'closest', showlegend: false, };
-plot = Plotly.newPlot('area', [sample_points, sample_textlabels], layout);  // {responsive: true}
-console.log( Object.keys(plot) );
+layout = { hovermode:'closest', showlegend: false,responsive: true };
+plot = Plotly.newPlot('area', [sample_points, sample_textlabels], layout);
 
 function point_filter_partial(by,op,par, _data, i) {
 	filterby = document.getElementById(by).value;
@@ -324,6 +324,13 @@ function axes_update() {
 	filterop = document.getElementById('cmbFilterOp1').value;
 	filterlev = parseFloat(document.getElementById('edtFilterParam1').value);
 	// console.log('filtering', filterby, filterop, filterlev)
+
+	// const result = words.filter(word => word.length > 6);
+
+	//let range = { lower: 13, upper: 16 }
+	//let teenagers = people.filter(function(person) { return person.age >= this.lower && person.age <= this.upper; }, range)
+
+	useful_keys = ["sample ID", "parent ID", "what changed", new_x_param, new_y_param, new_c_param];
 	if (filterby != '(show all)') {
 		data = {}
 		for (key in alldata) {
@@ -415,14 +422,11 @@ function axes_update() {
 			(document.getElementById("arrows").checked ? '&arrows=1' : '') + 
 			(document.getElementById("difflabels").checked ? '&difflabels=1' : ''); 
 			// TODO add filters 
-	console.log("CHANGING URL TO " + apparent_url);
 	if (googleid!=null) history.pushState(null, '',  apparent_url);
-
 
 	// this longer text will not be plotted - it only shows when users hover the mouse above the point
 	hoverlabels = [];
 	for ([id, idx] of data["sample ID"].entries()) {
-		// console.log("ID", id)
 		parent_index = data['parent ID'][id];
 		if (parent_index == -1) parentstr = "no parent"  // TODO why -1 here?
 		else {
@@ -433,8 +437,6 @@ function axes_update() {
 				parentstr += "; difference being <b>" +  data['what changed'][id] + "</b>";
 		}
 			
-
-		// console.log("DBG", id, new_c_param, data[new_c_param][id]);
 		colorpar = data[new_c_param][id]
 		if (colorpar == undefined || colorpar.trim() == "") 
 			colorpar = "no " + new_c_param + " value given" 
@@ -457,7 +459,6 @@ function axes_update() {
 	sample_points['x'] 	= data[new_x_param].map(d => parseFloat(d)); 
 	sample_points['y'] 	= data[new_y_param].map(d => parseFloat(d));
 	sample_points["marker"]["color"] = data[new_c_param];
-	//console.log(sample_points['x'], sample_points['y']);
 	sample_textlabels['x'] 	= data[new_x_param];		// NOTE: may be responsible for labels possibly disappearing in log plots!
 	sample_textlabels['y'] 	= data[new_y_param];
 	sample_textlabels["marker"]["color"] = data[new_c_param];
@@ -489,8 +490,6 @@ function axes_update() {
 			}
 			diff = data['what changed'][i];
 			if ((!isNaN(fromx)) && (!isNaN(tox)) && (!isNaN(fromy)) && (!isNaN(toy))) {
-				//console.log('arrow is valid');
-				//console.log(parent_index, diff,fromx,fromy,tox,toy);
 				if (document.getElementById("difflabels").checked == true)
 					layout.annotations.push({ text: diff, showarrow: false, font: { size: 12 }, xref:"x", xanchor:"center", 
 							x:(fromx+tox)/2, yref:"y", yanchor:"center", y:(fromy+toy)/2 });
