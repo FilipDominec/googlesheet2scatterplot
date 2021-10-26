@@ -20,7 +20,7 @@
 	div.sep { border-top:2px solid #aaa; color: #444; background:#eee; margin-top:5px; } 
 	div.sep:hover { color: blue; background:#bcf; } 
 
-	div.sepnew { border-top:2px solid #8f8; color: #444; background:#bfb; margin-top:5px; } 
+	div.sepnew { border-top:2px solid #8c8; color: #444; background:#bfb; margin-top:5px; } 
 	div.sepnew:hover { color: blue; background:#bcf; } 
 
 	@keyframes in { 0% { transform: scaleY(0) ; } 100% { transform: scaleY(1) ; visibility: visible; } }
@@ -51,7 +51,7 @@
 	<td> 
 		<input type="checkbox" id="xlog"		       	onclick="axes_update()"><label for="xlog">Logarithmic X axis</label><br>
 		<input type="checkbox" id="ylog"		       	onclick="axes_update()"><label for="ylog">Logarithmic Y axis</label><br>
-		<input type="checkbox" id="ids"			checked	onclick="axes_update()"><label for="ids">Annotate sample IDs</label><br>
+		<input type="checkbox" id="noids"			checked	onclick="axes_update()"><label for="ids">Hide sample IDs</label><br>
 		<input type="checkbox" id="arrows"				onclick="axes_update()"><label for="arrows">Draw inheritance arrows</label><br>
 		<input type="checkbox" id="difflabels"			onclick="axes_update()"><label for="difflabels">Print inheritance differences</label><br>
 	</td>
@@ -98,7 +98,7 @@
 </tr>
 </table>
 
-<center> <b> Google sheet for Plotly</b> (c) Filip Dominec (2018-2021) using javascript, HTML, the great <a href="https://plot.ly">Plotly</a> library and <a href="https://docs.google.com/spreadsheets">google documents</a></br> To share your choice of axes and colors, copy the full path from your address bar.<br> To edit the data, ask for editing permissions for the underlying Google spreadsheet. <br> To make a new plot of your own data, <b><a href='./howto.html'>follow the howto</a></b>. To contribute to the source code, see git repository at <a href="https://bitbucket.org/fdominec/gsheet2plotly/">https://bitbucket.org/fdominec/gsheet2plotly/</a>.  </center> 
+<center> <b> Google sheet for Plotly</b>, updated 2021-10-25 (c) Filip Dominec (2018-2021) using javascript, HTML, the great <a href="https://plot.ly">Plotly</a> library and <a href="https://docs.google.com/spreadsheets">google documents</a></br> To share your choice of axes and colors, copy the full path from your address bar.<br> To edit the data, ask for editing permissions for the underlying Google spreadsheet. <br> To make a new plot of your own data, <b><a href='./howto.html'>follow the howto</a></b>. To contribute to the source code, see git repository at <a href="https://bitbucket.org/fdominec/gsheet2plotly/">https://bitbucket.org/fdominec/gsheet2plotly/</a>.  </center> 
 <script>
 
 
@@ -247,7 +247,7 @@ for (key in alldata) {
 
 document.getElementById("xlog").checked = (url.searchParams.get("xlog") == '1' ? true : false );
 document.getElementById("ylog").checked = (url.searchParams.get("ylog") == '1' ? true : false );
-document.getElementById("ids").checked = (url.searchParams.get("ids") == '1' ? true : false );
+document.getElementById("noids").checked = (url.searchParams.get("noids") == '1' ? true : false );
 document.getElementById("arrows").checked = (url.searchParams.get("arrows") == '1' ? true : false );
 document.getElementById("difflabels").checked = (url.searchParams.get("difflabels") == '1' ? true : false );
 
@@ -411,10 +411,10 @@ function axes_update() {
 			"&c=" + encodeURI(new_c_param) + 
 			(document.getElementById("xlog").checked ? '&xlog=1' : '') + 
 			(document.getElementById("ylog").checked ? '&ylog=1' : '') + 
-			"&ids=" + (document.getElementById("ids").checked ? '1' : '0') + 
+			(document.getElementById("noids").checked ? '&noids=1' : '') + 
 			(document.getElementById("arrows").checked ? '&arrows=1' : '') + 
 			(document.getElementById("difflabels").checked ? '&difflabels=1' : ''); 
-			; // XXX add filters and axes settings
+			// TODO add filters 
 	console.log("CHANGING URL TO " + apparent_url);
 	if (googleid!=null) history.pushState(null, '',  apparent_url);
 
@@ -446,10 +446,10 @@ function axes_update() {
 	sample_points['text'] 	= hoverlabels;
 
 	// this shorter text will be (optionally) plotted
-	if (document.getElementById("ids").checked == true)
-		sample_textlabels["text"] 	= data["sample ID"]
-	else
+	if (document.getElementById("noids").checked == true)
 		sample_textlabels["text"] 	= "";
+	else
+		sample_textlabels["text"] 	= data["sample ID"]
 
 
 
