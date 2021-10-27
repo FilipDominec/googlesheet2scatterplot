@@ -252,6 +252,9 @@ document.getElementById("difflabels").checked = (url.searchParams.get("difflabel
 if (f = url.searchParams.get("filterby1")) { document.getElementById("cmbFilterBy1").value = f };
 if (f = url.searchParams.get("filterop1")) { document.getElementById("cmbFilterOp1").value = f };
 if (f = url.searchParams.get("filterparam1")) { document.getElementById("edtFilterParam1").value = f };
+if (f = url.searchParams.get("filterby2")) { document.getElementById("cmbFilterBy2").value = f };
+if (f = url.searchParams.get("filterop2")) { document.getElementById("cmbFilterOp2").value = f };
+if (f = url.searchParams.get("filterparam2")) { document.getElementById("edtFilterParam2").value = f };
 
 
 /********************************************************************************
@@ -437,7 +440,7 @@ function axes_update() {
 
 
 
-	// Update the text in the address bar
+	// Update the parameters in the URL
 	apparent_url = url_string.split("?")[0] + 
 			"?x=" + encodeURI(new_x_param) + 
 			"&y=" + encodeURI(new_y_param) + 
@@ -450,9 +453,10 @@ function axes_update() {
 			((document.getElementById("cmbFilterBy1").value !== '(show all)') ? ('&filterby1='+ document.getElementById('cmbFilterBy1').value) : '' ) +
 			((document.getElementById("cmbFilterOp1").value !== 'eq') ? ('&filterop1='+ document.getElementById('cmbFilterOp1').value) : '' ) +
 			((document.getElementById("edtFilterParam1").value) ? ('&filterparam1='+ document.getElementById('edtFilterParam1').value) : '' ) +
+			((document.getElementById("cmbFilterBy2").value !== '(show all)') ? ('&filterby2='+ document.getElementById('cmbFilterBy2').value) : '' ) +
+			((document.getElementById("cmbFilterOp2").value !== 'eq') ? ('&filterop2='+ document.getElementById('cmbFilterOp2').value) : '' ) +
+			((document.getElementById("edtFilterParam2").value) ? ('&filterparam2='+ document.getElementById('edtFilterParam2').value) : '' ) +
 			"&googleid=" + googleid;
-			//(document.getElementById("filterparam1").checked ? '&arrows=1' : '') + 
-			// TODO add filters 
 	if (googleid!=null) history.pushState(null, '',  apparent_url);
 
 	// this longer text will not be plotted - it only shows when users hover the mouse above the point
