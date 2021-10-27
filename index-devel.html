@@ -60,8 +60,8 @@
 		<b>Filter</b><br>
 		<select id="cmbFilterBy1" size=0 onchange='axes_update(this);'> <option title='(show all)' value='(show all)'>(show all)</option> </select> 
 		<select id="cmbFilterOp1" size=0 onchange='axes_update(this);'> 
-			<option title='gt' value='gt'  onselect='axes_update(this);'>is greater than</option>
 			<option title='eq' value='eq'  onselect='axes_update(this);'>is equal to</option>
+			<option title='gt' value='gt'  onselect='axes_update(this);'>is greater than</option>
 			<option title='lt' value='lt'  onselect='axes_update(this);'>is less than</option>
 			<option title='contains' value='contains'  onselect='axes_update(this);'>string contains</option>
 			<option title='notcontains' value='notcontains'  onselect='axes_update(this);'>string does not contain</option>
@@ -78,8 +78,8 @@
 		<select id="cmbFilterBy2" size=0 onchange='axes_update(this);'>
 			<option title='(show all)' value='(show all)'>(show all)</option> </select>
 		<select id="cmbFilterOp2" size=0 onchange='axes_update(this);'> 
-			<option title='gt' value='gt'  onselect='axes_update(this);'>is greater than</option>
 			<option title='eq' value='eq'  onselect='axes_update(this);'>is equal to</option>
+			<option title='gt' value='gt'  onselect='axes_update(this);'>is greater than</option>
 			<option title='lt' value='lt'  onselect='axes_update(this);'>is less than</option>
 			<option title='contains' value='contains'  onselect='axes_update(this);'>string contains</option>
 			<option title='notcontains' value='notcontains'  onselect='axes_update(this);'>string does not contain</option>
@@ -250,6 +250,10 @@ document.getElementById("noids").checked = (url.searchParams.get("noids") == '1'
 document.getElementById("arrows").checked = (url.searchParams.get("arrows") == '1' ? true : false );
 document.getElementById("difflabels").checked = (url.searchParams.get("difflabels") == '1' ? true : false );
 
+if (f = url.searchParams.get("filterby1")) { document.getElementById("cmbFilterBy1").value = f };
+if (f = url.searchParams.get("filterop1")) { document.getElementById("cmbFilterOp1").value = f };
+if (f = url.searchParams.get("filterparam1")) { document.getElementById("edtFilterParam1").value = f };
+
 
 /********************************************************************************
  * (Re)plotting the data
@@ -319,18 +323,10 @@ function axes_update() {
 	new_c_param = which_param(document.getElementsByName('Color-coded parameter'))
 	document.getElementById("displaycolorquant").innerHTML = new_c_param;
 
-	// filter points (TODO) THIS WORKS
+	// filter points (TODO) THIS WORKS, but the code is ugly
 	filterby = document.getElementById('cmbFilterBy1').value;
 	filterop = document.getElementById('cmbFilterOp1').value;
 	filterlev = parseFloat(document.getElementById('edtFilterParam1').value);
-	// console.log('filtering', filterby, filterop, filterlev)
-
-	// const result = words.filter(word => word.length > 6);
-
-	//let range = { lower: 13, upper: 16 }
-	//let teenagers = people.filter(function(person) { return person.age >= this.lower && person.age <= this.upper; }, range)
-
-	useful_keys = ["sample ID", "parent ID", "what changed", new_x_param, new_y_param, new_c_param];
 	if (filterby != '(show all)') {
 		data = {}
 		for (key in alldata) {
@@ -354,7 +350,7 @@ function axes_update() {
 
 	/* DISABLED TEMPORARILY - THIS DOES NOT WORK, MIXING SAMPLE NUMBERS ETC
 	//console.log(filterby, filterop, filterpar, filterlev)
-	useful_keys = ["sample ID", "parent ID", "what changed", new_x_param, new_y_param, new_c_param];
+	useful_keys = ["sample ID", "parent ID", "what changed", new_x_param, new_y_param, new_c_param]; // Why this fails?
 
 	data = {}; ancestry_data = {}; descent_data = {};
 	for (key of useful_keys) {
@@ -390,6 +386,13 @@ function axes_update() {
 			}
 		}
 	}
+	// console.log('filtering', filterby, filterop, filterlev)
+
+	// const result = words.filter(word => word.length > 6);
+
+	//let range = { lower: 13, upper: 16 }
+	//let teenagers = people.filter(function(person) { return person.age >= this.lower && person.age <= this.upper; }, range)
+
 	*/
 
 	// XXX if ((document.getElementsByName('ancestry').checked)  &&  dataindex ) { 
@@ -412,15 +415,19 @@ function axes_update() {
 
 	// Update the text in the address bar
 	apparent_url = url_string.split("?")[0] + 
-			"?googleid=" + googleid + 
-			"&x=" + encodeURI(new_x_param) + 
+			"?x=" + encodeURI(new_x_param) + 
 			"&y=" + encodeURI(new_y_param) + 
 			"&c=" + encodeURI(new_c_param) + 
 			(document.getElementById("xlog").checked ? '&xlog=1' : '') + 
 			(document.getElementById("ylog").checked ? '&ylog=1' : '') + 
 			(document.getElementById("noids").checked ? '&noids=1' : '') + 
 			(document.getElementById("arrows").checked ? '&arrows=1' : '') + 
-			(document.getElementById("difflabels").checked ? '&difflabels=1' : ''); 
+			(document.getElementById("difflabels").checked ? '&difflabels=1' : '') + 
+			((document.getElementById("cmbFilterBy1").value !== '(show all)') ? ('&filterby1='+ document.getElementById('cmbFilterBy1').value) : '' ) +
+			((document.getElementById("cmbFilterOp1").value !== 'eq') ? ('&filterop1='+ document.getElementById('cmbFilterOp1').value) : '' ) +
+			((document.getElementById("edtFilterParam1").value) ? ('&filterparam1='+ document.getElementById('edtFilterParam1').value) : '' ) +
+			"&googleid=" + googleid;
+			//(document.getElementById("filterparam1").checked ? '&arrows=1' : '') + 
 			// TODO add filters 
 	if (googleid!=null) history.pushState(null, '',  apparent_url);
 
