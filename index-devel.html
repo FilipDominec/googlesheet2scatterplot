@@ -71,7 +71,6 @@
 		<center>
 		<select id="cmbFilterAndOr" size=0 onchange='axes_update(this);'> 
 			<option title='and' value='and'  onselect='axes_update(this);'>and simultaneously</option>
-			<option title='or' value='or'  onselect='axes_update(this);'>or</option>
 		</select>
 		</center>
 
@@ -345,6 +344,31 @@ function axes_update() {
 		} 
 	} else {
 		data = alldata;
+	};
+
+    alldata2 = data;
+
+	filterby = document.getElementById('cmbFilterBy2').value;
+	filterop = document.getElementById('cmbFilterOp2').value;
+	filterlev = parseFloat(document.getElementById('edtFilterParam2').value);
+	if (filterby != '(show all)') {
+		data = {}
+		for (key in alldata2) {
+		  newarr = []
+		  counter = 0
+		  for (d in alldata2[key]) {
+			if (((filterop == 'gt') && (alldata2[filterby][counter] > filterlev)) || 
+					((filterop == 'eq') && (alldata2[filterby][counter] == filterlev)) || 
+					((filterop == 'lt') && (alldata2[filterby][counter] < filterlev))) {
+					// TODO include descendants
+					// TODO include ancestry
+				newarr.push(alldata2[key][d])};
+				counter += 1;
+		  }
+		  data[key] = newarr;
+		} 
+	} else {
+		data = alldata2;
 	};
 
 
