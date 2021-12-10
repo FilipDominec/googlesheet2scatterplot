@@ -40,7 +40,7 @@
 	<td>
 		<div id="area" style="width:900px;height:900px;"></div>
 		<table style='td {padding}' border='0px' align='center'>
-			<tr><td class='cs' colspan='5'>color scale for&nbsp;<span id='displaycolorquant'></span>: </td></tr>
+			<tr><td class='cs' colspan='5'>color scale for&nbsp;<span id='displaycolorquant'></span> (move mouse over points to see their values) </td></tr>
 			<tr><td class='cs'></td><td class='cs' colspan='3'><img src='my_colorscale_m.png' width='500px' height='5px'></td><td class='cs'></td></tr>
 			<tr><td class='cs' colspan='2'>min</td><td class='cs'>·</td><td class='cs' colspan='2'>max</td></tr>
 		</table>
@@ -58,7 +58,7 @@
 	</td>
 	<td colspan="3"> 
 		<b>Filter</b><br>
-		<select id="cmbFilterBy1" size=0 onchange='axes_update(this);'> 
+		<select id="cmbFilterBy1" size=0 onchange='axes_update(this);'  RM CALLBACK??>  
 			<option title='(NOT USED)' value='(NOT USED)'>(NOT USED)</option> </select> 
 		<select id="cmbFilterOp1" size=0 onchange='axes_update(this);'> 
 			<option title='eq' value='eq'  onselect='axes_update(this);'>is equal to</option>
@@ -89,10 +89,10 @@
 		<hr>
 
 		<center>
-		<input type="checkbox" id="ancestry" onclick="axes_update(this)">
+		<input type="checkbox" id="ancestry" onclick='axes_update(this);'>
 			<label for="ancestry" title='show also all points that are (parents of)ᴺ any shown point'>
 			Include ancestry</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-		<input type="checkbox" id="descendants" onclick="axes_update(this)">
+		<input type="checkbox" id="descendants" onclick='axes_update(this);'>
 			<label for="descendants" title='show also all points which any shown point is (parent of)ᴺ'>
 			Include descendants</label>
 		</center>
@@ -305,10 +305,6 @@ function axes_update() {
 	new_c_param = which_param(document.getElementsByName('Color-coded parameter'))
 	document.getElementById("displaycolorquant").innerHTML = new_c_param;
 
-	// filter points (TODO) THIS WORKS, but the code is ugly
-	// TODO include descendants
-	// TODO include ancestry
-	
 	// Note: <empty string> passes as "less than" any number. Can this make troubles?
 	// Debugging: console.log("FILTERING VALUES by ", filterby, f, filterop, filterpar, 'RESULT', mask[mask.length - 1]);
 	function filter_mask(by, op, par, alldata) {
@@ -332,11 +328,10 @@ function axes_update() {
 		};
 	};
 
-	Array(alldata['sample ID'].length).fill(1);
-
 	mask1 = filter_mask('cmbFilterBy1','cmbFilterOp1', 'edtFilterParam1', alldata);
 	mask2 = filter_mask('cmbFilterBy2','cmbFilterOp2', 'edtFilterParam2', alldata);
 
+	// combine the masks from filters
 	if ((mask1 == '(NOT USED)') && (mask2 == '(NOT USED)')) {   
 		mask = Array(alldata['sample ID'].length).fill(1);     // i.e. all pass
 	} else if (mask1 == '(NOT USED)') { 
@@ -352,9 +347,44 @@ function axes_update() {
 	}	
 
 	// Debugging: console.log("FILTERING VALUES by ", filterby, f, filterop, filterpar, 'RESULT', mask[mask.length - 1]);
-					// TODO include descendants
+
 					// TODO include ancestry
 
+	// generate the masks for ancestry and descendants
+	if (document.getElementById('ancestry').checked) { 
+		ancestry_mask = Array(alldata['sample ID'].length).fill(0);
+		for (i=0; i<alldata['sample ID'].length; i++) {
+			//parent_index = alldata['sample ID'].indexOf(alldata['parent ID'][i].trim());
+			parent_index = alldata['sample ID'].indexOf(alldata['parent ID'][i]);
+			if (mask[i] && (parent_index !== -1))  { ancestry_mask[parent_index] = 1; }
+		}
+	}
+	if (document.getElementById('descendants').checked) { 
+		descendants_mask = Array(alldata['sample ID'].length).fill(0);
+		for (i=0; i<alldata['sample ID'].length; i++) {
+			parent_index = alldata['sample ID'].indexOf(alldata['parent ID'][i]) ;		 // );
+			if ((parent_index !== -1) && mask[parent_index])  { 
+				descendants_mask[i] = 1; 
+				console.log('ADDING ',  alldata['sample ID'][i], 'because its parent is ', alldata['sample ID'][parent_index])
+			}
+		}
+
+			//console.log('# I #ch CH', i, alldata['sample ID'][i], child_index , alldata['sample ID'][child_index])
+			//if ((child_index !== -1)) console.log('sample ', alldata['sample ID'][i], '  has parent ', 
+
+		console.log(descendants_mask)
+	}
+
+
+	// combine the masks from ancestry and descendants with the filter mask
+	if (document.getElementById('ancestry').checked) { 
+		for (var i=0; i < mask.length; i++) {
+			if (ancestry_mask[i]) { mask[i] = 1; } } }	
+	if (document.getElementById('descendants').checked) { 
+		for (var i=0; i < mask.length; i++) {
+			if (descendants_mask[i]) { mask[i] = 1; } } }	
+
+	// Finally filter the data by resulting mask
 	data = {}
 	for (key in alldata) {
 	  data[key] = alldata[key].filter((item, index) => (mask[index]))
