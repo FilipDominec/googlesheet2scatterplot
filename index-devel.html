@@ -58,7 +58,8 @@
 	</td>
 	<td colspan="3"> 
 		<b>Filter</b><br>
-		<select id="cmbFilterBy1" size=0 onchange='axes_update(this);'> <option title='(show all)' value='(show all)'>(show all)</option> </select> 
+		<select id="cmbFilterBy1" size=0 onchange='axes_update(this);'> 
+			<option title='(NOT USED)' value='(NOT USED)'>(NOT USED)</option> </select> 
 		<select id="cmbFilterOp1" size=0 onchange='axes_update(this);'> 
 			<option title='eq' value='eq'  onselect='axes_update(this);'>is equal to</option>
 			<option title='gt' value='gt'  onselect='axes_update(this);'>is greater than</option>
@@ -71,11 +72,12 @@
 		<center>
 		<select id="cmbFilterAndOr" size=0 onchange='axes_update(this);'> 
 			<option title='and' value='and'  onselect='axes_update(this);'>and simultaneously</option>
+			<option title='or' value='or'  onselect='axes_update(this);'>or independently</option>
 		</select>
 		</center>
 
 		<select id="cmbFilterBy2" size=0 onchange='axes_update(this);'>
-			<option title='(show all)' value='(show all)'>(show all)</option> </select>
+			<option title='(NOT USED)' value='(NOT USED)'>(NOT USED)</option> </select>
 		<select id="cmbFilterOp2" size=0 onchange='axes_update(this);'> 
 			<option title='eq' value='eq'  onselect='axes_update(this);'>is equal to</option>
 			<option title='gt' value='gt'  onselect='axes_update(this);'>is greater than</option>
@@ -249,12 +251,12 @@ document.getElementById("noids").checked = (url.searchParams.get("noids") == '1'
 document.getElementById("arrows").checked = (url.searchParams.get("arrows") == '1' ? true : false );
 document.getElementById("difflabels").checked = (url.searchParams.get("difflabels") == '1' ? true : false );
 
-if (f = url.searchParams.get("filterby1")) { document.getElementById("cmbFilterBy1").value = f };
-if (f = url.searchParams.get("filterop1")) { document.getElementById("cmbFilterOp1").value = f };
-if (f = url.searchParams.get("filterparam1")) { document.getElementById("edtFilterParam1").value = f };
-if (f = url.searchParams.get("filterby2")) { document.getElementById("cmbFilterBy2").value = f };
-if (f = url.searchParams.get("filterop2")) { document.getElementById("cmbFilterOp2").value = f };
-if (f = url.searchParams.get("filterparam2")) { document.getElementById("edtFilterParam2").value = f };
+if (f = url.searchParams.get("fb1")) { document.getElementById("cmbFilterBy1").value = f };
+if (f = url.searchParams.get("fo1")) { document.getElementById("cmbFilterOp1").value = f };
+if (f = url.searchParams.get("fp1")) { document.getElementById("edtFilterParam1").value = f };
+if (f = url.searchParams.get("fb2")) { document.getElementById("cmbFilterBy2").value = f };
+if (f = url.searchParams.get("fo2")) { document.getElementById("cmbFilterOp2").value = f };
+if (f = url.searchParams.get("fp2")) { document.getElementById("edtFilterParam2").value = f };
 
 
 /********************************************************************************
@@ -291,138 +293,78 @@ var sample_rels = { x: [], y: [], mode: 'lines', color: 'grey', type: 'scatter',
 layout = { hovermode:'closest', showlegend: false,responsive: true };
 plot = Plotly.newPlot('area', [sample_points, sample_textlabels], layout);
 
-function point_filter_partial(by,op,par, _data, i) {
-	filterby = document.getElementById(by).value;
-	filterop = document.getElementById(op).value;
-	filterpar = document.getElementById(par).value;
-	filterlev = parseFloat(edtFilterParam1);
-	if (filterby == "(show all)") {return true}; 
-	return (((filterop == "gt") && (_data[filterby][i] > parseFloat(filterpar))) || 
-					((filterop == "eq") && (_data[filterby][i] == parseFloat(filterpar))) || 
-					((filterop == "lt") && (_data[filterby][i] < parseFloat(filterpar))) || 
-					((filterop == "contains") && (_data[filterby][i].indexOf(filterpar) !== -1)) ||
-					((filterop == "notcontains") && (_data[filterby][i].indexOf(filterpar) == -1)))
-}
-
-function filter_points(_data, i) {
-	filter1 = point_filter_partial('cmbFilterBy1', 'cmbFilterOp1', 'edtFilterParam1', _data, i)
-	filter2 = point_filter_partial('cmbFilterBy2', 'cmbFilterOp2', 'edtFilterParam2', _data, i)
-
-	filtermode = document.getElementById('cmbFilterAndOr').value;
-	if (filtermode == "and") return (filter1 && filter2)
-	else if (filtermode == "or") return (filter1 || filter2);
-
-	// console.log("FILTERING VALUES by ", filterby, filterop, filterpar, _data.indexOf(filterpar), 'RESULT', filter1);
-	return filter1
-}
-
-
 function axes_update() {
 	// determine which parameters were selected by the user
-	function which_param(radios) { for (var i = 0, length = radios.length; i < length; i++) { if (radios[i].checked) { return radios[i].value; } } }
+	function which_param(radios) { 
+		for (var i = 0, length = radios.length; i < length; i++) { 
+			if (radios[i].checked) return radios[i].value; 
+		} 
+	}
 	new_x_param = which_param(document.getElementsByName('X axis parameter'))
 	new_y_param = which_param(document.getElementsByName('Y axis parameter'))
 	new_c_param = which_param(document.getElementsByName('Color-coded parameter'))
 	document.getElementById("displaycolorquant").innerHTML = new_c_param;
 
 	// filter points (TODO) THIS WORKS, but the code is ugly
-	filterby = document.getElementById('cmbFilterBy1').value;
-	filterop = document.getElementById('cmbFilterOp1').value;
-	filterlev = parseFloat(document.getElementById('edtFilterParam1').value);
-	if (filterby != '(show all)') {
-		data = {}
-		for (key in alldata) {
-		  newarr = []
-		  counter = 0
-		  for (d in alldata[key]) {
-			if (((filterop == 'gt') && (alldata[filterby][counter] > filterlev)) || 
-					((filterop == 'eq') && (alldata[filterby][counter] == filterlev)) || 
-					((filterop == 'lt') && (alldata[filterby][counter] < filterlev))) {
-					// TODO include descendants
-					// TODO include ancestry
-				newarr.push(alldata[key][d])};
-				counter += 1;
-		  }
-		  data[key] = newarr;
-		} 
-	} else {
-		data = alldata;
+	// TODO include descendants
+	// TODO include ancestry
+	
+	// Note: <empty string> passes as "less than" any number. Can this make troubles?
+	// Debugging: console.log("FILTERING VALUES by ", filterby, f, filterop, filterpar, 'RESULT', mask[mask.length - 1]);
+	function filter_mask(by, op, par, alldata) {
+		filterby = document.getElementById(by).value;
+		filterop = document.getElementById(op).value;
+		filterpar = document.getElementById(par).value;
+		if (filterby == '(NOT USED)') {
+			return '(NOT USED)' 
+		} else {
+			mask = []
+			for (f of alldata[filterby]) {
+				mask.push(
+						((filterop == 'gt') && (f > parseFloat(filterpar))) || 
+						((filterop == 'eq') && (f == parseFloat(filterpar))) || 
+						((filterop == 'lt') && (f < parseFloat(filterpar))) ||
+						((filterop == 'contains') && (f.indexOf(filterpar) !== -1)) ||
+						((filterop == 'notcontains') && (f.indexOf(filterpar) == -1))
+					); 
+			}
+			return mask;
+		};
 	};
 
-    alldata2 = data;
+	Array(alldata['sample ID'].length).fill(1);
 
-	filterby = document.getElementById('cmbFilterBy2').value;
-	filterop = document.getElementById('cmbFilterOp2').value;
-	filterlev = parseFloat(document.getElementById('edtFilterParam2').value);
-	if (filterby != '(show all)') {
-		data = {}
-		for (key in alldata2) {
-		  newarr = []
-		  counter = 0
-		  for (d in alldata2[key]) {
-			if (((filterop == 'gt') && (alldata2[filterby][counter] > filterlev)) || 
-					((filterop == 'eq') && (alldata2[filterby][counter] == filterlev)) || 
-					((filterop == 'lt') && (alldata2[filterby][counter] < filterlev))) {
+	mask1 = filter_mask('cmbFilterBy1','cmbFilterOp1', 'edtFilterParam1', alldata);
+	mask2 = filter_mask('cmbFilterBy2','cmbFilterOp2', 'edtFilterParam2', alldata);
+
+	if ((mask1 == '(NOT USED)') && (mask2 == '(NOT USED)')) {   
+		mask = Array(alldata['sample ID'].length).fill(1);     // i.e. all pass
+	} else if (mask1 == '(NOT USED)') { 
+		mask = mask2
+	} else if (mask2 == '(NOT USED)') { 
+		mask = mask1 
+	} else {
+		mask = [];
+		if (document.getElementById('cmbFilterAndOr').value == 'or') 
+			for (var i=0; i < mask1.length; i++) { mask.push(mask1[i] + mask2[i]); }
+		else if (document.getElementById('cmbFilterAndOr').value == 'and')
+			for (var i=0; i < mask1.length; i++) { mask.push(mask1[i] * mask2[i]); }
+	}	
+
+	// Debugging: console.log("FILTERING VALUES by ", filterby, f, filterop, filterpar, 'RESULT', mask[mask.length - 1]);
 					// TODO include descendants
 					// TODO include ancestry
-				newarr.push(alldata2[key][d])};
-				counter += 1;
-		  }
-		  data[key] = newarr;
-		} 
-	} else {
-		data = alldata2;
-	};
 
+	data = {}
+	for (key in alldata) {
+	  data[key] = alldata[key].filter((item, index) => (mask[index]))
+	} 
 
-	/* DISABLED TEMPORARILY - THIS DOES NOT WORK, MIXING SAMPLE NUMBERS ETC
-	//console.log(filterby, filterop, filterpar, filterlev)
-	useful_keys = ["sample ID", "parent ID", "what changed", new_x_param, new_y_param, new_c_param]; // Why this fails?
-
-	data = {}; ancestry_data = {}; descent_data = {};
-	for (key of useful_keys) {
-		data[key] = []
-		ancestry_data[key] = []
-		descent_data[key] = []
-	}
-	for (const [i, id] of alldata['sample ID'].entries()) {
-		if (filter_points(alldata, i)) {
-			console.log("ADDING DATA AS IT PASSES FILTER:", alldata['sample ID'][i])
-			for (key of useful_keys) {
-				data[key].push(alldata[key][i]);
-			}
-
-			parent_index = alldata['sample ID'].indexOf(alldata['parent ID'][i].trim()); // TODO make this recursive
-			if ((document.getElementById('ancestry').checked)  &&  (parent_index !== -1) ) { 
-				console.log("ADDING DATA",   alldata['sample ID'][parent_index], " AS IT IS ANCESTOR OF:", alldata['sample ID'][i])
-				for (key of useful_keys) {
-					ancestry_data[key].push(alldata[key][parent_index]);
-				}
-			}
-			*/
-
-			/* TODO
-			if (document.getElementById('descendants').checked) { 
-				for (const [i, id] of alldata['sample ID'].entries()) {
-					parent_index = alldata['sample ID'].indexOf(alldata['parent ID'][i].trim());
-					if descent_index
-				}
-				for (key of useful_keys) {
-					descent_data[key].push(alldata[key][parent_index]);
-				}
-			}
-		}
-	}
-	// console.log('filtering', filterby, filterop, filterlev)
-
-	// const result = words.filter(word => word.length > 6);
-
-	//let range = { lower: 13, upper: 16 }
-	//let teenagers = people.filter(function(person) { return person.age >= this.lower && person.age <= this.upper; }, range)
-
-	*/
 
 	// XXX if ((document.getElementsByName('ancestry').checked)  &&  dataindex ) { 
+			// let teenagers = people.filter(function(person) {
+			// 	return person.age >= this.lower && person.age <= this.upper;
+			//  range)
 	/*
 	for (const [i, id] of data['sample ID'].entries()) {
 			deduplicator = ancestry_data['sample ID'].indexOf(parent_index);
@@ -436,8 +378,6 @@ function axes_update() {
 	}
 	*/
 
-	
-
 
 
 	// Update the parameters in the URL
@@ -450,12 +390,13 @@ function axes_update() {
 			(document.getElementById("noids").checked ? '&noids=1' : '') + 
 			(document.getElementById("arrows").checked ? '&arrows=1' : '') + 
 			(document.getElementById("difflabels").checked ? '&difflabels=1' : '') + 
-			((document.getElementById("cmbFilterBy1").value !== '(show all)') ? ('&filterby1='+ document.getElementById('cmbFilterBy1').value) : '' ) +
-			((document.getElementById("cmbFilterOp1").value !== 'eq') ? ('&filterop1='+ document.getElementById('cmbFilterOp1').value) : '' ) +
-			((document.getElementById("edtFilterParam1").value) ? ('&filterparam1='+ document.getElementById('edtFilterParam1').value) : '' ) +
-			((document.getElementById("cmbFilterBy2").value !== '(show all)') ? ('&filterby2='+ document.getElementById('cmbFilterBy2').value) : '' ) +
-			((document.getElementById("cmbFilterOp2").value !== 'eq') ? ('&filterop2='+ document.getElementById('cmbFilterOp2').value) : '' ) +
-			((document.getElementById("edtFilterParam2").value) ? ('&filterparam2='+ document.getElementById('edtFilterParam2').value) : '' ) +
+			((document.getElementById("cmbFilterBy1").value !== '(NOT USED)') ? ('&fb1='+ document.getElementById('cmbFilterBy1').value) : '' ) +
+			((document.getElementById("cmbFilterOp1").value !== 'eq') ? ('&fo1='+ document.getElementById('cmbFilterOp1').value) : '' ) +
+			((document.getElementById("edtFilterParam1").value) ? ('&fp1='+ document.getElementById('edtFilterParam1').value) : '' ) +
+			((document.getElementById("cmbFilterAndOr").value) ? ('&fop='+ document.getElementById('cmbFilterAndOr').value) : '' ) +
+			((document.getElementById("cmbFilterBy2").value !== '(NOT USED)') ? ('&fb2='+ document.getElementById('cmbFilterBy2').value) : '' ) +
+			((document.getElementById("cmbFilterOp2").value !== 'eq') ? ('&fo2='+ document.getElementById('cmbFilterOp2').value) : '' ) +
+			((document.getElementById("edtFilterParam2").value) ? ('&fp2='+ document.getElementById('edtFilterParam2').value) : '' ) +
 			"&googleid=" + googleid;
 	if (googleid!=null) history.pushState(null, '',  apparent_url);
 
