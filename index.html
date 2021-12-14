@@ -67,6 +67,8 @@
 			<option title='lt' value='lt'  onselect='axes_update(this);'>is less than</option>
 			<option title='contains' value='contains'  onselect='axes_update(this);'>string contains</option>
 			<option title='notcontains' value='notcontains'  onselect='axes_update(this);'>string does not contain</option>
+			<option title='contained' value='contained'  onselect='axes_update(this);'>is contained in string</option>
+			<option title='notcontained' value='notcontained'  onselect='axes_update(this);'>is not contained in string</option>
 		</select>
 		<input type="text" id="edtFilterParam1" size=30 onchange='axes_update(this);'> <br>
 		
@@ -85,6 +87,8 @@
 			<option title='lt' value='lt'  onselect='axes_update(this);'>is less than</option>
 			<option title='contains' value='contains'  onselect='axes_update(this);'>string contains</option>
 			<option title='notcontains' value='notcontains'  onselect='axes_update(this);'>string does not contain</option>
+			<option title='contained' value='contained'  onselect='axes_update(this);'>is contained in string</option>
+			<option title='notcontained' value='notcontained'  onselect='axes_update(this);'>is not contained in string</option>
 		</select>
 		<input type="text" id="edtFilterParam2" size=30 onchange='axes_update(this);'> 
 		<hr>
@@ -323,7 +327,9 @@ function axes_update() {
 						((filterop == 'eq') && (f == parseFloat(filterpar))) || 
 						((filterop == 'lt') && (f < parseFloat(filterpar))) ||
 						((filterop == 'contains') && (f.indexOf(filterpar) !== -1)) ||
-						((filterop == 'notcontains') && (f.indexOf(filterpar) == -1))
+						((filterop == 'notcontains') && (f.indexOf(filterpar) == -1)) ||
+						((filterop == 'contained') && (filterpar.indexOf(f) !== -1)) ||
+						((filterop == 'notcontained') && (filterpar.indexOf(f) == -1))
 					); 
 			}
 			return mask;
