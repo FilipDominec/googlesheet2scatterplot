@@ -1,5 +1,5 @@
-<!DOCTYPE html>
 
+<!DOCTYPE html>
 <head>
 <meta charset="UTF-8"> 
 
@@ -58,7 +58,7 @@
 		<input type="checkbox" id="difflabels"	onclick="axes_update()"><label for="difflabels">Print inheritance differences</label><br>
 	</td>
 	<td colspan="3"> 
-		<b>Filter</b><br>
+		<b>Filter</b> <span id='filtercount'></span><br>
 		<select id="cmbFilterBy1" size=0 onchange='axes_update(this);'  RM CALLBACK??>  
 			<option title='(NOT USED)' value='(NOT USED)'>(NOT USED)</option> </select> 
 		<select id="cmbFilterOp1" size=0 onchange='axes_update(this);'> 
@@ -373,7 +373,7 @@ function axes_update() {
 			parent_index = alldata['sample ID'].indexOf(alldata['parent ID'][i]) ;		 // );
 			if ((parent_index !== -1) && mask[parent_index])  { 
 				descendants_mask[i] = 1; 
-				console.log('ADDING ',  alldata['sample ID'][i], 'because its parent is ', alldata['sample ID'][parent_index])
+				//console.log('ADDING ',  alldata['sample ID'][i], 'because its parent is ', alldata['sample ID'][parent_index])
 			}
 		}
 
@@ -397,7 +397,7 @@ function axes_update() {
 	for (key in alldata) {
 	  data[key] = alldata[key].filter((item, index) => (mask[index]))
 	} 
-
+	document.getElementById("filtercount").innerHTML = '(passed by ' + data[key].length + ' out of ' + alldata[key].length +')';
 
 	// XXX if ((document.getElementsByName('ancestry').checked)  &&  dataindex ) { 
 			// let teenagers = people.filter(function(person) {
