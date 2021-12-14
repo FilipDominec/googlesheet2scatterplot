@@ -10,7 +10,7 @@
 <script src="csvToArray.js"></script>
 <link rel="shortcut icon" href="favicon.png">
 
-<title>gsheet2plotly DEVELOPMENT VERSION 2</title>
+<title>gsheet2plotly</title>
 <style type="text/css"> 
 	body  { font-family: sans; background:silver; }
 	td  { border:2px solid gray; padding:4px;  border-radius:10px; background:white; }
@@ -52,6 +52,7 @@
 	<td> 
 		<input type="checkbox" id="xlog"		onclick="axes_update()"><label for="xlog">Logarithmic X axis</label><br>
 		<input type="checkbox" id="ylog"		onclick="axes_update()"><label for="ylog">Logarithmic Y axis</label><br>
+		<input type="checkbox" id="clog"		onclick="axes_update()"><label for="clog">Logarithmic colours</label><br>
 		<input type="checkbox" id="noids"		onclick="axes_update()"><label for="noids">Hide sample IDs</label><br>
 		<input type="checkbox" id="arrows"		onclick="axes_update()"><label for="arrows">Draw inheritance arrows</label><br>
 		<input type="checkbox" id="difflabels"	onclick="axes_update()"><label for="difflabels">Print inheritance differences</label><br>
@@ -100,7 +101,7 @@
 </tr>
 </table>
 
-<center> <b> Google sheet for Plotly</b>, updated 2021-10-25 (c) Filip Dominec (2018-2021) using javascript, HTML, the great <a href="https://plot.ly">Plotly</a> library and <a href="https://docs.google.com/spreadsheets">google documents</a></br> To share your choice of axes and colors, copy the full path from your address bar.<br> To edit the data, ask for editing permissions for the underlying Google spreadsheet. <br> To make a new plot of your own data, <b><a href='./howto.html'>follow the howto</a></b>. To contribute to the source code, see git repository at <a href="https://bitbucket.org/fdominec/gsheet2plotly/">https://bitbucket.org/fdominec/gsheet2plotly/</a>.  </center> 
+<center> <b> Google sheet for Plotly</b>, updated 2021-12-13 (c) Filip Dominec (2018-2021) using javascript, HTML, the great <a href="https://plot.ly">Plotly</a> library and <a href="https://docs.google.com/spreadsheets">google documents</a></br> To share your choice of axes and colors, copy the full path from your address bar.<br> To edit the data, ask for editing permissions for the underlying Google spreadsheet. <br> To make a new plot of your own data, <b><a href='./howto.html'>follow the howto</a></b>. To contribute to the source code, see git repository at <a href="https://bitbucket.org/fdominec/gsheet2plotly/">https://bitbucket.org/fdominec/gsheet2plotly/</a>.  </center> 
 <script>
 
 
@@ -247,6 +248,7 @@ for (key in alldata) {
 
 document.getElementById("xlog").checked = (url.searchParams.get("xlog") == '1' ? true : false );
 document.getElementById("ylog").checked = (url.searchParams.get("ylog") == '1' ? true : false );
+document.getElementById("clog").checked = (url.searchParams.get("clog") == '1' ? true : false );
 document.getElementById("noids").checked = (url.searchParams.get("noids") == '1' ? true : false );
 document.getElementById("arrows").checked = (url.searchParams.get("arrows") == '1' ? true : false );
 document.getElementById("difflabels").checked = (url.searchParams.get("difflabels") == '1' ? true : false );
@@ -417,6 +419,7 @@ function axes_update() {
 			"&c=" + encodeURI(new_c_param) + 
 			(document.getElementById("xlog").checked ? '&xlog=1' : '') + 
 			(document.getElementById("ylog").checked ? '&ylog=1' : '') + 
+			(document.getElementById("clog").checked ? '&clog=1' : '') + 
 			(document.getElementById("noids").checked ? '&noids=1' : '') + 
 			(document.getElementById("arrows").checked ? '&arrows=1' : '') + 
 			(document.getElementById("difflabels").checked ? '&difflabels=1' : '') + 
@@ -464,10 +467,16 @@ function axes_update() {
 	// Load the actual sample data (TODO: decide if parseFloat is useful here, plotly converts strings too)
 	sample_points['x'] 	= data[new_x_param].map(d => parseFloat(d)); 
 	sample_points['y'] 	= data[new_y_param].map(d => parseFloat(d));
-	sample_points["marker"]["color"] = data[new_c_param];
+	if (document.getElementById("clog").checked == true)  {
+		 marker_colors = data[new_c_param].map(d => Math.log10(parseFloat(d)));
+	} else {
+		marker_colors = data[new_c_param];
+    };
+	sample_points["marker"]["color"] = marker_colors; //data[new_c_param];
 	sample_textlabels['x'] 	= data[new_x_param];		// NOTE: may be responsible for labels possibly disappearing in log plots!
 	sample_textlabels['y'] 	= data[new_y_param];
-	sample_textlabels["marker"]["color"] = data[new_c_param];
+
+	sample_textlabels["marker"]["color"] =  marker_colors;
 	Plotly.react('area', [sample_points, sample_textlabels, sample_rels]); 		// Replot new data and update axis labels
 
 	// prepare annotations etc. to be updated
