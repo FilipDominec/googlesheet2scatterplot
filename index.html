@@ -118,7 +118,7 @@ var url = new URL(url_string);
 var googleid = url.searchParams.get("googleid");  
 //window.googleDocCallback = function () { return true; }; // might help with cross-site troubles?
 //var csvurl = proxy + 'https://docs.google.com/spreadsheets/d/e/' + googleid + '/pub?output=csv&range=A1:ZZ9999&callback=googleDocCallback';
-var csvurl = 'https://docs.google.com/spreadsheets/d/e/' + googleid + '/pub?output=csv&range=A1:AP165'; // XXX
+var csvurl = 'https://docs.google.com/spreadsheets/d/e/' + googleid + '/pub?output=csv&range=A1:ZZ9999'; // XXX
 document.getElementById("display").innerHTML = 'gsheet2plotly waiting to receive data from Google spreadsheet address:<br><small>'+ csvurl + '</small>';
 
 
