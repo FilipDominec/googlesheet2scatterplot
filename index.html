@@ -409,10 +409,14 @@ function axes_update() {
 	// Filter out all points that wont show (i.e. have no numeric value for the X and Y axis, 
 	// color value is not critical as they can be black ) - this rescales colormap to cover full range of 
 	// *visible points* only
-	nummask = []
+	nummask = []; nummask_counter = 0;
 	for (i=0; i<alldata['sample ID'].length; i++) {
-		nummask.push( !isNaN(parseFloat(alldata[new_x_param][i])) && !isNaN(parseFloat(alldata[new_y_param][i])) ); 
-		}
+		if ( !isNaN(parseFloat(alldata[new_x_param][i])) && !isNaN(parseFloat(alldata[new_y_param][i])) ) {	
+			nummask_counter += 1;
+			nummask.push(1); 
+		} else { 
+			nummask.push(0); }
+	}
 
 	// Finally filter the data by resulting mask
 	data = {}
@@ -421,7 +425,7 @@ function axes_update() {
 	  // data[key] = alldata[key].filter((item, index) => (mask[index] && !isNaN(alldata[new_x_param])))
 	  // XXX data[key] = alldata[key].filter((item, index) => (mask[index]))
 	} 
-	document.getElementById("filtercount").innerHTML = '(matching ' + data[key].length + ' out of ' + alldata[key].length +' available entries)';
+	document.getElementById("filtercount").innerHTML = '(matching ' + data[key].length + ' out of ' + nummask_counter +' available X,Y pairs)';
 
 
 
@@ -492,17 +496,18 @@ function axes_update() {
 	sample_labeledpoints["marker"]["color"] =  marker_colors;
 
 
-	// Debugging: 
-	console.log("COLOR min,max vals floatVals nummask", Math.min(...marker_colors),Math.max(...marker_colors),
-				 marker_colors,
-				 data[new_c_param].map(d => parseFloat(d)), nummask);
+	// Replot new data and update axis labels
+	Plotly.react('area', [sample_points, sample_labeledpoints, sample_rels]); 		
 
 
-	Plotly.react('area', [sample_points, sample_labeledpoints, sample_rels]); 		// Replot new data and update axis labels
+	// Prepare annotations etc. to be updated
+	xunit = note[new_x_param].slice(note[new_x_param].indexOf('(')+1, note[new_x_param].indexOf(')'))
+	if (xunit != '') {xunit = " (" + xunit + ")"; }
+    layout.xaxis = {title: new_x_param + xunit};
 
-	// prepare annotations etc. to be updated
-	layout.xaxis = {title: new_x_param};
-	layout.yaxis = {title: new_y_param};
+	yunit = note[new_y_param].slice(note[new_y_param].indexOf('(')+1, note[new_y_param].indexOf(')'))
+	if (yunit != '') {yunit = " (" + yunit + ")"; }
+    layout.yaxis = {title: new_y_param + yunit};
 
 	
 	// Sticky axes - attempt to show the 0 value on axes, if feasible 
