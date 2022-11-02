@@ -62,9 +62,10 @@
 		<select id="cmbFilterBy1" size=0 onchange='axes_update(this);'  RM CALLBACK??>  
 			<option title='(NOT USED)' value='(NOT USED)'>(NOT USED)</option> </select> 
 		<select id="cmbFilterOp1" size=0 onchange='axes_update(this);'> 
-			<option title='eq' value='eq'  onselect='axes_update(this);'>is equal to</option>
-			<option title='gt' value='gt'  onselect='axes_update(this);'>is greater than</option>
-			<option title='lt' value='lt'  onselect='axes_update(this);'>is less than</option>
+			<option title='(NOT USED)' value='(NOT USED)'>(NOT USED)</option> 
+			<option title='eq' value='eq'  >is equal to</option>
+			<option title='gt' value='gt'  >is greater than</option>
+			<option title='lt' value='lt'  >is less than</option>
 			<option title='contains' value='contains'  onselect='axes_update(this);'>string contains</option>
 			<option title='notcontains' value='notcontains'  onselect='axes_update(this);'>string does not contain</option>
 			<option title='contained' value='contained'  onselect='axes_update(this);'>is contained in string</option>
@@ -82,6 +83,7 @@
 		<select id="cmbFilterBy2" size=0 onchange='axes_update(this);'>
 			<option title='(NOT USED)' value='(NOT USED)'>(NOT USED)</option> </select>
 		<select id="cmbFilterOp2" size=0 onchange='axes_update(this);'> 
+			<option title='(NOT USED)' value='(NOT USED)'>(NOT USED)</option> 
 			<option title='eq' value='eq'  onselect='axes_update(this);'>is equal to</option>
 			<option title='gt' value='gt'  onselect='axes_update(this);'>is greater than</option>
 			<option title='lt' value='lt'  onselect='axes_update(this);'>is less than</option>
@@ -231,9 +233,9 @@ for (key in alldata) {
 		sectname = group[key]+':';
 		for (axisname of axisnames) { 
 			addseparator(axisname,	sectname);
-		};
-		addcomboitem('cmbFilterBy1', '['+group[key]+']', true);
-		addcomboitem('cmbFilterBy2', '['+group[key]+']', true);
+		}; 	
+		addcomboitem('cmbFilterBy1', '▁▃▅▇ '+group[key]+' ▇▅▃▁', true);
+		addcomboitem('cmbFilterBy2', '▁▃▅▇ '+group[key]+' ▇▅▃▁', true);
 	}
 	if (!(key.startsWith("_"))) {   // table columns named with leading underscore are hidden
 		addradio('X axis parameter',	  sectname, key, url.searchParams.get("x"), note[key]);
@@ -269,8 +271,8 @@ if (f = url.searchParams.get("fp2")) { document.getElementById("edtFilterParam2"
  * Plot styles & config
  ********************************************************************************/
 
-my_colorscale = [[0,'rgb(255,64,0)'], [0.1,'rgb(216,128,0)'], [0.2,'rgb(144,218,0)'], [0.4,'rgb(0,218,0)'],  
-	  [0.6,'rgb(0,128,255)'], [.8,'rgb(64, 0, 255)'], [1,'rgb(128, 0, 128)'], ]
+my_colorscale = [[0,'rgb(255,64,0)'], [0.15,'rgb(216,128,0)'], [0.3,'rgb(218,218,0)'], [0.4,'rgb(0,255,0)'],  
+	  [0.6,'rgb(0,128,218)'], [.8,'rgb(0, 0, 255)'], [1,'rgb(128, 0, 128)'], ]
 
 // The smaller, full-opacity points representing each sample
 var sample_points = {
@@ -335,7 +337,7 @@ function axes_update() {
 		filterby = document.getElementById(by).value;
 		filterop = document.getElementById(op).value;
 		filterpar = document.getElementById(par).value;
-		if (filterby == '(NOT USED)') {
+		if ((filterby == '(NOT USED)') || (filterop == '(NOT USED)')) {
 			return '(NOT USED)' 
 		} else {
 			mask = []
@@ -429,7 +431,7 @@ function axes_update() {
 	  // data[key] = alldata[key].filter((item, index) => (mask[index] && !isNaN(alldata[new_x_param])))
 	  // XXX data[key] = alldata[key].filter((item, index) => (mask[index]))
 	} 
-	document.getElementById("filtercount").innerHTML = '(matching ' + data[key].length + ' out of ' + nummask_counter +' available X,Y pairs)';
+	document.getElementById("filtercount").innerHTML = ' matched by ' + data[key].length + ' out of ' + nummask_counter +' available points';
 
 
 
@@ -534,9 +536,10 @@ function axes_update() {
 
 	// Plot diagonal eye-guiding line, if meaningful
 	if ((xunit != '') && (xunit == yunit) && 
-			(document.getElementById("xlog").checked == document.getElementById("ylog").checked)) {
+			(document.getElementById("xlog").checked == document.getElementById("ylog").checked) &&
+			(Math.max(xmin,ymin) < Math.min(xmax,ymax))		) {
 		diagonal_guide.x = [Math.max(xmin,ymin), Math.min(xmax,ymax)];
-		// console.log("MINMAX ", xmin, xmax, [Math.min(xmin,ymin), Math.max(xmax,ymax)] )
+		console.log("MINMAX ", xmin, xmax, [Math.min(xmin,ymin), Math.max(xmax,ymax)] )
 	} else { 
 		diagonal_guide.x = [];
 	};
