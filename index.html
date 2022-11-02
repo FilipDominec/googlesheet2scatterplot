@@ -15,12 +15,12 @@
 	body  { font-family: sans; background:silver; }
 	td  { border:2px solid gray; padding:4px;  border-radius:10px; background:white; }
 	td.cs  { border:0; padding:1px; font-size:80%; text-align:center; width=20percent;}
-	input { vertical-align:middle;  margin: -1px 3px; } 
+	input { vertical-align:middle;  margin: -1px 0px; } 
 	label:hover { color: blue; background:#def; }
-	div.sep { border-top:2px solid #aaa; color: #444; background:#eee; margin-top:5px; } 
+	div.sep { border-top:1px solid #aaa; color: #444; background:#eee; margin-top:5px; } 
 	div.sep:hover { color: blue; background:#bcf; } 
 
-	div.sepnew { border-top:2px solid #8c8; color: #444; background:#bfb; margin-top:5px; } 
+	div.sepnew { border-top:1px solid #8c8; color: #444; background:#bfb; margin-top:5px; } 
 	div.sepnew:hover { color: blue; background:#bcf; } 
 
 	@keyframes in { 0% { transform: scaleY(0) ; } 100% { transform: scaleY(1) ; visibility: visible; } }
@@ -58,7 +58,7 @@
 		<input type="checkbox" id="difflabels"	onclick="axes_update()"><label for="difflabels">Print inheritance differences</label><br>
 	</td>
 	<td colspan="3"> 
-		<b>Filter</b> <span id='filtercount'></span><br>
+		<b>Filters</b> <span id='filtercount'></span><br>
 		<select id="cmbFilterBy1" size=0 onchange='axes_update(this);'  RM CALLBACK??>  
 			<option title='(NOT USED)' value='(NOT USED)'>(NOT USED)</option> </select> 
 		<select id="cmbFilterOp1" size=0 onchange='axes_update(this);'> 
@@ -105,7 +105,7 @@
 </tr>
 </table>
 
-<center> <b> Google sheet for Plotly</b>, updated 2021-12-13 (c) Filip Dominec (2018-2021) using javascript, HTML, the great <a href="https://plot.ly">Plotly</a> library and <a href="https://docs.google.com/spreadsheets">google documents</a></br> To share your choice of axes and colors, copy the full path from your address bar.<br> To edit the data, ask for editing permissions for the underlying Google spreadsheet. <br> To make a new plot of your own data, <b><a href='./howto.html'>follow the howto</a></b>. To contribute to the source code, see git repository at <a href="https://bitbucket.org/fdominec/gsheet2plotly/">https://bitbucket.org/fdominec/gsheet2plotly/</a>.  </center> 
+<center> <b> Google sheet for Plotly</b>, updated 2022-11-01 (c) Filip Dominec (2018-2022) using javascript, HTML, the great <a href="https://plot.ly">Plotly</a> library and <a href="https://docs.google.com/spreadsheets">google documents</a></br> To share your choice of axes and colors, copy the full path from your address bar.<br> To edit the data, ask for editing permissions for the underlying Google spreadsheet. <br> To make a new plot of your own data, <b><a href='./howto.html'>follow the howto</a></b>. To contribute to the source code, see git repository at <a href="https://bitbucket.org/fdominec/gsheet2plotly/">https://bitbucket.org/fdominec/gsheet2plotly/</a>.  </center> 
 <script>
 
 
@@ -266,12 +266,13 @@ if (f = url.searchParams.get("fp2")) { document.getElementById("edtFilterParam2"
 
 
 /********************************************************************************
- * (Re)plotting the data
+ * Plot styles & config
  ********************************************************************************/
 
 my_colorscale = [[0,'rgb(255,64,0)'], [0.1,'rgb(216,128,0)'], [0.2,'rgb(144,218,0)'], [0.4,'rgb(0,218,0)'],  
 	  [0.6,'rgb(0,128,255)'], [.8,'rgb(64, 0, 255)'], [1,'rgb(128, 0, 128)'], ]
 
+// The smaller, full-opacity points representing each sample
 var sample_points = {
   x: [],
   y: [],
@@ -282,6 +283,7 @@ var sample_points = {
   marker: { size: 8, colorscale: my_colorscale },
 };
 
+// Larger, semi-transparent disks around each point that indicate multiple samples share the same location
 var sample_textlabels = {
   x: [],
   y: [],
@@ -289,15 +291,27 @@ var sample_textlabels = {
   mode:'markers+text',
   type:'scatter',
   textposition:'bottom center',
+	textfont: { size: 12, color: '#000' },
   marker: { size: 16, opacity:.2, colorscale: my_colorscale },
   showlegend: 0, 
-  hoverinfo: 'none', // TODO: test
+  hoverinfo: 'none', // avoids less informative bubbles from this dataset dominate those coming from `sample_points`
 };
 
-
+// Optional arrows connecting "parent" points with "children"
 var sample_rels = { x: [], y: [], mode: 'lines', color: 'grey', type: 'scatter', };
-layout = { hovermode:'closest', showlegend: false,responsive: true };
+
+
+layout = { hovermode:'closest', showlegend: false, responsive: true,
+	margin: { l: 100, r: 5, b: 60, t: 0, pad: 5 }, title: false,
+	font: { size: 16, color: '#000' },
+	};
+
 plot = Plotly.newPlot('area', [sample_points, sample_textlabels], layout);
+
+
+/********************************************************************************
+ * (Re)plotting the data
+ ********************************************************************************/
 
 function axes_update() {
 	// determine which parameters were selected by the user
@@ -358,7 +372,7 @@ function axes_update() {
 
 					// TODO include ancestry
 
-	// generate the masks for ancestry and descendants
+	// If selected, propagate the mask also for ancestry and descendants of previously matched points
 	if (document.getElementById('ancestry').checked) { 
 		ancestry_mask = Array(alldata['sample ID'].length).fill(0);
 		for (i=0; i<alldata['sample ID'].length; i++) {
@@ -380,7 +394,7 @@ function axes_update() {
 			//console.log('# I #ch CH', i, alldata['sample ID'][i], child_index , alldata['sample ID'][child_index])
 			//if ((child_index !== -1)) console.log('sample ', alldata['sample ID'][i], '  has parent ', 
 
-		console.log(descendants_mask)
+		// console.log(descendants_mask)
 	}
 
 
@@ -397,7 +411,7 @@ function axes_update() {
 	for (key in alldata) {
 	  data[key] = alldata[key].filter((item, index) => (mask[index]))
 	} 
-	document.getElementById("filtercount").innerHTML = '(passed by ' + data[key].length + ' out of ' + alldata[key].length +')';
+	document.getElementById("filtercount").innerHTML = '(matching ' + data[key].length + ' out of ' + alldata[key].length +' total entries)';
 
 	// XXX if ((document.getElementsByName('ancestry').checked)  &&  dataindex ) { 
 			// let teenagers = people.filter(function(person) {
@@ -439,7 +453,7 @@ function axes_update() {
 			"&googleid=" + googleid;
 	if (googleid!=null) history.pushState(null, '',  apparent_url);
 
-	// this longer text will not be plotted - it only shows when users hover the mouse above the point
+	// this longer text will not be printed in the graph - it only shows when users hover the mouse above the point
 	hoverlabels = [];
 	for ([id, idx] of data["sample ID"].entries()) {
 		parent_index = data['parent ID'][id];
@@ -462,7 +476,7 @@ function axes_update() {
 	}
 	sample_points['text'] 	= hoverlabels;
 
-	// this shorter text will be (optionally) plotted
+	// this shorter text will be (optionally) printed below each plotted points
 	if (document.getElementById("noids").checked == true)
 		sample_textlabels["text"] 	= "";
 	else
@@ -479,15 +493,35 @@ function axes_update() {
 		marker_colors = data[new_c_param];
     };
 	sample_points["marker"]["color"] = marker_colors; //data[new_c_param];
+
 	sample_textlabels['x'] 	= data[new_x_param];		// NOTE: may be responsible for labels possibly disappearing in log plots!
 	sample_textlabels['y'] 	= data[new_y_param];
-
 	sample_textlabels["marker"]["color"] =  marker_colors;
+
 	Plotly.react('area', [sample_points, sample_textlabels, sample_rels]); 		// Replot new data and update axis labels
 
 	// prepare annotations etc. to be updated
 	layout.xaxis = {title: new_x_param};
-	layout.yaxis = {title: new_y_param};                                        
+	layout.yaxis = {title: new_y_param};
+
+	
+	// Sticky axes - prefer to show the 0 value if feasible 
+	if (!document.getElementById("xlog").checked) {
+		spx = sample_points['x'].filter(e=>e);      // filters out NaN
+		xmin = Math.min(...spx); xmax = Math.max(...spx); xran = xmax-xmin;
+		if ((0 < xmin) && (xmin < xran)) { layout.xaxis.range = [0, xmax+0.02*xran]; }
+		if ((-xran < xmax) && (xmax < 0)) { layout.xaxis.range = [xmin-0.02*xran, 0]; }
+		}
+	if (!document.getElementById("ylog").checked) {
+		spy = sample_points['y'].filter(e=>e);      // filters out NaN
+		ymin = Math.min(...spy); ymax = Math.max(...spy); yran = ymax-ymin;
+		if ((0 < ymin) && (ymin < yran)) { layout.yaxis.range = [0, ymax+0.02*yran]; }
+		if ((-yran < ymax) && (ymax < 0)) { layout.yaxis.range = [ymin-0.02*yran, 0]; }
+		}
+
+	//layout.xaxis.autorange = false;
+	//layout.xaxis.range = [xmin-0.02*xran, xmax+0.02*xran];
+
 	layout.annotations = [] 
 	for (i=0; i<data['sample ID'].length; i++) {
 		parent_index = data['sample ID'].indexOf(data['parent ID'][i].trim());
