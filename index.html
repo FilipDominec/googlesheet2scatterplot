@@ -523,14 +523,15 @@ function axes_update() {
 	spy = data[new_y_param].filter(e=>e);      
 	xmin = Math.min(...spx); xmax = Math.max(...spx); xran = xmax-xmin;
 	ymin = Math.min(...spy); ymax = Math.max(...spy); yran = ymax-ymin;
+	stickiness = 5
 	if (!document.getElementById("xlog").checked) {
-		if ((0 < xmin) && (xmin < xran)) { layout.xaxis.range = [0, xmax+0.02*xran]; xmin=0; }
-		if ((-xran < xmax) && (xmax < 0)) { layout.xaxis.range = [xmin-0.02*xran, 0]; }
+		if ((0 < xmin) && (xmin < xran*stickiness)) { layout.xaxis.range = [0, xmax+0.1*xran]; xmin=0; }
+		if ((-xran*stickiness < xmax) && (xmax < 0)) { layout.xaxis.range = [xmin-0.02*xran, 0]; }
 		//layout.xaxis.autorange = false;
 		}
 	if (!document.getElementById("ylog").checked) {
-		if ((0 < ymin) && (ymin < yran)) { layout.yaxis.range = [0, ymax+0.02*yran]; ymin=0; }
-		if ((-yran < ymax) && (ymax < 0)) { layout.yaxis.range = [ymin-0.02*yran, 0]; }
+		if ((0 < ymin) && (ymin < yran*stickiness)) { layout.yaxis.range = [0, ymax+0.1*yran]; ymin=0; }
+		if ((-yran*stickiness < ymax) && (ymax < 0)) { layout.yaxis.range = [ymin-0.02*yran, 0]; }
 		}
 
 
@@ -539,7 +540,7 @@ function axes_update() {
 			(document.getElementById("xlog").checked == document.getElementById("ylog").checked) &&
 			(Math.max(xmin,ymin) < Math.min(xmax,ymax))		) {
 		diagonal_guide.x = [Math.max(xmin,ymin), Math.min(xmax,ymax)];
-		console.log("MINMAX ", xmin, xmax, [Math.min(xmin,ymin), Math.max(xmax,ymax)] )
+		//console.log("MINMAX ", xmin, xmax, [Math.min(xmin,ymin), Math.max(xmax,ymax)] )
 	} else { 
 		diagonal_guide.x = [];
 	};
