@@ -284,14 +284,14 @@ var sample_points = {
 };
 
 // Larger, semi-transparent disks around each point that indicate multiple samples share the same location
-var sample_textlabels = {
+var sample_labeledpoints = {
   x: [],
   y: [],
   text:[],
   mode:'markers+text',
   type:'scatter',
   textposition:'bottom center',
-	textfont: { size: 12, color: '#000' },
+  textfont: { size: 12, color: '#000' },
   marker: { size: 16, opacity:.2, colorscale: my_colorscale },
   showlegend: 0, 
   hoverinfo: 'none', // avoids less informative bubbles from this dataset dominate those coming from `sample_points`
@@ -306,7 +306,7 @@ layout = { hovermode:'closest', showlegend: false, responsive: true,
 	font: { size: 16, color: '#000' },
 	};
 
-plot = Plotly.newPlot('area', [sample_points, sample_textlabels], layout);
+plot = Plotly.newPlot('area', [sample_points, sample_labeledpoints], layout);
 
 
 /********************************************************************************
@@ -398,7 +398,7 @@ function axes_update() {
 	}
 
 
-	// combine the masks from ancestry and descendants with the filter mask
+	// Combine the masks from ancestry and descendants with the filter mask
 	if (document.getElementById('ancestry').checked) { 
 		for (var i=0; i < mask.length; i++) {
 			if (ancestry_mask[i]) { mask[i] = 1; } } }	
@@ -406,29 +406,22 @@ function axes_update() {
 		for (var i=0; i < mask.length; i++) {
 			if (descendants_mask[i]) { mask[i] = 1; } } }	
 
+	// Filter out all points that wont show (i.e. have no numeric value for the X and Y axis, 
+	// color value is not critical as they can be black ) - this rescales colormap to cover full range of 
+	// *visible points* only
+	nummask = []
+	for (i=0; i<alldata['sample ID'].length; i++) {
+		nummask.push( !isNaN(parseFloat(alldata[new_x_param][i])) && !isNaN(parseFloat(alldata[new_y_param][i])) ); 
+		}
+
 	// Finally filter the data by resulting mask
 	data = {}
 	for (key in alldata) {
-	  data[key] = alldata[key].filter((item, index) => (mask[index]))
+	  data[key] = alldata[key].filter((item, index) => (mask[index] * nummask[index]))
+	  // data[key] = alldata[key].filter((item, index) => (mask[index] && !isNaN(alldata[new_x_param])))
+	  // XXX data[key] = alldata[key].filter((item, index) => (mask[index]))
 	} 
-	document.getElementById("filtercount").innerHTML = '(matching ' + data[key].length + ' out of ' + alldata[key].length +' total entries)';
-
-	// XXX if ((document.getElementsByName('ancestry').checked)  &&  dataindex ) { 
-			// let teenagers = people.filter(function(person) {
-			// 	return person.age >= this.lower && person.age <= this.upper;
-			//  range)
-	/*
-	for (const [i, id] of data['sample ID'].entries()) {
-			deduplicator = ancestry_data['sample ID'].indexOf(parent_index);
-			if (parent_index !== -1) {
-			}
-			console.log("PRESENT", id, "PARENT", data['parent ID'][i], "alldIDX", alldata['sample ID'][parent_index])
-	}
-
-	for (key of useful_keys) {
-		data[key] = data[key].concat(ancestry_data[key]);
-	}
-	*/
+	document.getElementById("filtercount").innerHTML = '(matching ' + data[key].length + ' out of ' + alldata[key].length +' available entries)';
 
 
 
@@ -478,9 +471,9 @@ function axes_update() {
 
 	// this shorter text will be (optionally) printed below each plotted points
 	if (document.getElementById("noids").checked == true)
-		sample_textlabels["text"] 	= "";
+		sample_labeledpoints["text"] 	= "";
 	else
-		sample_textlabels["text"] 	= data["sample ID"]
+		sample_labeledpoints["text"] 	= data["sample ID"]
 
 
 
@@ -494,20 +487,27 @@ function axes_update() {
     };
 	sample_points["marker"]["color"] = marker_colors; //data[new_c_param];
 
-	sample_textlabels['x'] 	= data[new_x_param];		// NOTE: may be responsible for labels possibly disappearing in log plots!
-	sample_textlabels['y'] 	= data[new_y_param];
-	sample_textlabels["marker"]["color"] =  marker_colors;
+	sample_labeledpoints['x'] 	= data[new_x_param];	// note: not parseFloat-ing -> labels possibly disappearing in log plots?
+	sample_labeledpoints['y'] 	= data[new_y_param];
+	sample_labeledpoints["marker"]["color"] =  marker_colors;
 
-	Plotly.react('area', [sample_points, sample_textlabels, sample_rels]); 		// Replot new data and update axis labels
+
+	// Debugging: 
+	console.log("COLOR min,max vals floatVals nummask", Math.min(...marker_colors),Math.max(...marker_colors),
+				 marker_colors,
+				 data[new_c_param].map(d => parseFloat(d)), nummask);
+
+
+	Plotly.react('area', [sample_points, sample_labeledpoints, sample_rels]); 		// Replot new data and update axis labels
 
 	// prepare annotations etc. to be updated
 	layout.xaxis = {title: new_x_param};
 	layout.yaxis = {title: new_y_param};
 
 	
-	// Sticky axes - prefer to show the 0 value if feasible 
+	// Sticky axes - attempt to show the 0 value on axes, if feasible 
 	if (!document.getElementById("xlog").checked) {
-		spx = sample_points['x'].filter(e=>e);      // filters out NaN
+		spx = sample_points['x'].filter(e=>e);      // filters out empty strings, NaN etc.
 		xmin = Math.min(...spx); xmax = Math.max(...spx); xran = xmax-xmin;
 		if ((0 < xmin) && (xmin < xran)) { layout.xaxis.range = [0, xmax+0.02*xran]; }
 		if ((-xran < xmax) && (xmax < 0)) { layout.xaxis.range = [xmin-0.02*xran, 0]; }
