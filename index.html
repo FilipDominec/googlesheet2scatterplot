@@ -297,8 +297,12 @@ var sample_labeledpoints = {
   hoverinfo: 'none', // avoids less informative bubbles from this dataset dominate those coming from `sample_points`
 };
 
-// Optional arrows connecting "parent" points with "children"
-var sample_rels = { x: [], y: [], mode: 'lines', color: 'grey', type: 'scatter', };
+// Diagonal eye-guiding line
+var diagonal_guide = { x: [], y: [], mode: 'lines', type: 'scatter', line:{color:'grey', dash:'dot'} }; // TODO dedup
+
+// TODO RM? Optional arrows connecting "parent" points with "children"
+// var sample_rels = { x: [], y: [], mode: 'lines', color: 'grey', type: 'scatter', };
+
 
 
 layout = { hovermode:'closest', showlegend: false, responsive: true,
@@ -306,7 +310,7 @@ layout = { hovermode:'closest', showlegend: false, responsive: true,
 	font: { size: 16, color: '#000' },
 	};
 
-plot = Plotly.newPlot('area', [sample_points, sample_labeledpoints], layout);
+plot = Plotly.newPlot('area', [], layout);
 
 
 /********************************************************************************
@@ -497,10 +501,10 @@ function axes_update() {
 
 
 	// Replot new data and update axis labels
-	Plotly.react('area', [sample_points, sample_labeledpoints, sample_rels]); 		
+	Plotly.react('area', [sample_points, sample_labeledpoints, diagonal_guide]); 		
 
 
-	// Prepare annotations etc. to be updated
+	// Prepare axes labels to be updated
 	xunit = note[new_x_param].slice(note[new_x_param].indexOf('(')+1, note[new_x_param].indexOf(')'))
 	if (xunit != '') {xunit = " (" + xunit + ")"; }
     layout.xaxis = {title: new_x_param + xunit};
@@ -509,23 +513,37 @@ function axes_update() {
 	if (yunit != '') {yunit = " (" + yunit + ")"; }
     layout.yaxis = {title: new_y_param + yunit};
 
-	
+
 	// Sticky axes - attempt to show the 0 value on axes, if feasible 
+	//spx = sample_points['x'].filter(e=>e);      // filters out empty strings, NaN etc.
+	//spy = sample_points['y'].filter(e=>e);      
+	spx = data[new_x_param].filter(e=>e);      // filters out empty strings, NaN etc.
+	spy = data[new_y_param].filter(e=>e);      
+	xmin = Math.min(...spx); xmax = Math.max(...spx); xran = xmax-xmin;
+	ymin = Math.min(...spy); ymax = Math.max(...spy); yran = ymax-ymin;
 	if (!document.getElementById("xlog").checked) {
-		spx = sample_points['x'].filter(e=>e);      // filters out empty strings, NaN etc.
-		xmin = Math.min(...spx); xmax = Math.max(...spx); xran = xmax-xmin;
-		if ((0 < xmin) && (xmin < xran)) { layout.xaxis.range = [0, xmax+0.02*xran]; }
+		if ((0 < xmin) && (xmin < xran)) { layout.xaxis.range = [0, xmax+0.02*xran]; xmin=0; }
 		if ((-xran < xmax) && (xmax < 0)) { layout.xaxis.range = [xmin-0.02*xran, 0]; }
+		//layout.xaxis.autorange = false;
 		}
 	if (!document.getElementById("ylog").checked) {
-		spy = sample_points['y'].filter(e=>e);      // filters out NaN
-		ymin = Math.min(...spy); ymax = Math.max(...spy); yran = ymax-ymin;
-		if ((0 < ymin) && (ymin < yran)) { layout.yaxis.range = [0, ymax+0.02*yran]; }
+		if ((0 < ymin) && (ymin < yran)) { layout.yaxis.range = [0, ymax+0.02*yran]; ymin=0; }
 		if ((-yran < ymax) && (ymax < 0)) { layout.yaxis.range = [ymin-0.02*yran, 0]; }
 		}
 
-	//layout.xaxis.autorange = false;
-	//layout.xaxis.range = [xmin-0.02*xran, xmax+0.02*xran];
+
+	// Plot diagonal eye-guiding line, if meaningful
+	if ((xunit != '') && (xunit == yunit) && 
+			(document.getElementById("xlog").checked == document.getElementById("ylog").checked)) {
+		diagonal_guide.x = [Math.max(xmin,ymin), Math.min(xmax,ymax)];
+		// console.log("MINMAX ", xmin, xmax, [Math.min(xmin,ymin), Math.max(xmax,ymax)] )
+	} else { 
+		diagonal_guide.x = [];
+	};
+	diagonal_guide.y = diagonal_guide.x;
+
+	
+
 
 	layout.annotations = [] 
 	for (i=0; i<data['sample ID'].length; i++) {
