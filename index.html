@@ -456,6 +456,20 @@ function axes_update() {
 			"&googleid=" + googleid;
 	if (googleid!=null) history.pushState(null, '',  apparent_url);
 
+
+	// Prepare axes labels to be updated
+	xunit = note[new_x_param].slice(note[new_x_param].indexOf('(')+1, note[new_x_param].indexOf(')'))
+	if (xunit != '') {xunit = " (" + xunit + ")"; }
+    layout.xaxis = {title: new_x_param + xunit};
+
+	yunit = note[new_y_param].slice(note[new_y_param].indexOf('(')+1, note[new_y_param].indexOf(')'))
+	if (yunit != '') {yunit = " (" + yunit + ")"; }
+    layout.yaxis = {title: new_y_param + yunit};
+
+	cunit = note[new_c_param].slice(note[new_c_param].indexOf('(')+1, note[new_c_param].indexOf(')'))
+	console.log("C-UNIT ", new_c_param, cunit)
+
+
 	// this longer text will not be printed in the graph - it only shows when users hover the mouse above the point
 	hoverlabels = [];
 	for ([id, idx] of data["sample ID"].entries()) {
@@ -473,7 +487,8 @@ function axes_update() {
 		if (colorpar == undefined || colorpar.trim() == "") 
 			colorpar = "no " + new_c_param + " value given" 
 		else 
-			colorpar = new_c_param + " = " + colorpar;
+			colorpar = new_c_param + " = " + colorpar + " " + cunit; 
+			console.log("    C-upd ", new_c_param, cunit)
 
 		hoverlabels.push("<b>" + data['sample ID'][id] + "</b> with " + parentstr + " <br> and with " + colorpar )
 	}
@@ -506,15 +521,6 @@ function axes_update() {
 	Plotly.react('area', [sample_points, sample_labeledpoints, diagonal_guide]); 		
 
 
-	// Prepare axes labels to be updated
-	xunit = note[new_x_param].slice(note[new_x_param].indexOf('(')+1, note[new_x_param].indexOf(')'))
-	if (xunit != '') {xunit = " (" + xunit + ")"; }
-    layout.xaxis = {title: new_x_param + xunit};
-
-	yunit = note[new_y_param].slice(note[new_y_param].indexOf('(')+1, note[new_y_param].indexOf(')'))
-	if (yunit != '') {yunit = " (" + yunit + ")"; }
-    layout.yaxis = {title: new_y_param + yunit};
-
 
 	// Sticky axes - attempt to show the 0 value on axes, if feasible 
 	//spx = sample_points['x'].filter(e=>e);      // filters out empty strings, NaN etc.
@@ -523,7 +529,7 @@ function axes_update() {
 	spy = data[new_y_param].filter(e=>e);      
 	xmin = Math.min(...spx); xmax = Math.max(...spx); xran = xmax-xmin;
 	ymin = Math.min(...spy); ymax = Math.max(...spy); yran = ymax-ymin;
-	stickiness = 5
+	stickiness = 3
 	if (!document.getElementById("xlog").checked) {
 		if ((0 < xmin) && (xmin < xran*stickiness)) { layout.xaxis.range = [0, xmax+0.1*xran]; xmin=0; }
 		if ((-xran*stickiness < xmax) && (xmax < 0)) { layout.xaxis.range = [xmin-0.02*xran, 0]; }
