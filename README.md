@@ -1,16 +1,22 @@
-# vzkt-xy
+# gsheet2scatterplot - Motivation and use
 
-## Motivation and use
+Among the most common graph types used in science are *scatter plots*, where individual points are placed into a two-coordinate plane. This project extracts data from a Google Sheet and displays them interactively on the screen as an interactive web page.  
 
-Scatter plots, where individual points are placed into a two-coordinate plane, is one most common plotting styles in science. In real life, datasets are often not limited to two parameters (i.e. X and Y coordinate), and different (non)correlations are revealed depending on which two parameters are be represented by the X and Y axes. Office table processors can do this; but it is useful to switch the settings by a single click.
+Any decent spreadsheet processor can generate a scatter plot, but there are good reasons to use a HTML/JavaScript page for it. The purpose of this project is to make viewing the datasets interactive, collaborative and to add several features that are useful for laboratory sample management:
+* **Interactivity**: 
+* **Collaboration**: When the webpage 
+* **Special features**: 
 
-Even more useful is to put the whole project online, so that many people can edit and view the data. And most of the work has already been done! Numerous libraries (e.g. Plotly in javascript) enable one to put interactive scatter plots into a website. Several websites allow one to store data for individual plots  (e. g. Google Spreadsheets). So this project offers nothing but a simple HTML+JavaScript page that works as a glue between the CSV data (exported from your Google Spreadsheet), and Plotly (that makes a nice graph).
+
+In practice, datasets are often not limited to two parameters, which would nicely map to X and Y coordinates. Characterisation of samples e.g. in experimental physics can provide one with literally dozens of numbers for each sample!  potential (non)correlations are revealed depending on which two parameters are be represented by the X and Y axes. Office table processors can do this; but it is useful to switch the settings by a single click.
+
+Even more useful is make the plotting application an interactive web page, so that many people can edit and view the data. And this is not hard, as most of the work has already been done! Numerous libraries (e.g. Plotly in javascript) enable one to put interactive scatter plots into a website. Several websites allow one to store data for individual plots  (e. g. Google Spreadsheets). So this project offers nothing but a simple HTML+JavaScript page that works as a glue between the CSV data (exported from your Google Spreadsheet), and Plotly (that makes a nice graph).
 
 Note this gives you just a javascript page; all data are stored in your own Google spreadsheet, all plotting is done in your browser. You may open the index.html locally, or put it on your website for easier access online. Therefore, one HTML page running anywhere can be used for as many data tables as you wish. 
 
 ----
 
-## Example use for comparing the chemical elements
+# Example use for comparing the chemical elements
 
 To demonstrate how this project works, we provide 
 1. a dataset containing basic information on chemical elements. You can view it at the [google sheets here](https://docs.google.com/spreadsheets/d/1K4z2Up7PbC__3yXLqWTkNsnOSVtqYm4u6FtFCVmyTXw/edit?gid=0#gid=0). Of course you can make your own copy to add some new columns or new elements.
@@ -29,7 +35,7 @@ Cloning & editing the Google sheets table you can fill it with your own column n
 
 ----
 
-## Additional features of the plotting HTML page
+# Additional features of the plotting HTML page
 
 1. **Parameter grouping:** The first row of the table denotes the parameter group. Useful when there are over 20 parameters per point.
 1. **Point color as a third axis:** Rainbow scale can show  hidden higher-order correlation between points.
@@ -40,7 +46,7 @@ Cloning & editing the Google sheets table you can fill it with your own column n
 
 ----
 
-## Running the script
+# Trying the script online
 
 The web page can be found at **https://www.fzu.cz/~dominecf/xy/?googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o&x=length&y=weight&c=maze%20solving**
 
