@@ -17,18 +17,18 @@ To demonstrate how this project works, we provide
 
 
 Having assigned the period and group number in the periodic table to each element, the graph can arrange them to form an inverted periodic table as we know it.  
-![elements by row and column in the periodic table](docs/example_elements.png)
+![elements by row and column in the periodic table](./docs/example_elements.png)
 <a href="https://filipdominec.github.io/googlesheet2scatterplot/?x=group&y=period&c=period&fo1=(NOT%20USED)&fop=and&fo2=(NOT%20USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o">https://filipdominec.github.io/googlesheet2scatterplot/?x=group&y=period&c=period&fo1=(NOT%20USED)&fop=and&fo2=(NOT%20USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o</a>
 
 Depending on the data filled in the table, many interesting correlations can be interactively examined.
 For example, by two mouse clicks we can rearrange the elements to show how their boiling points are related to their melting points. We have also switched the X,Y axes to logarithmic scale. This nicely shows that monoatomic noble gases have their boiling/melting temperatures very close, lying on the graph diagonal (automatically added dashed line). For most elements the ratio about 1.5-1.8 %, whereas for alkaline metals and similar ones (Hg, Bi, Pb) form a line at about 300 %. There are some outliers like sublimating arsenic, or biatomic covalently bound liquid metal Gallium.  There is a lot of interesting physics to discuss (which is beyond the scope of this website).
 
-![elements by boiling and melting point](docs/example_elements_by_boiling_melting.png)
+![elements by boiling and melting point](./docs/example_elements_by_boiling_melting.png)
 <a href="https://filipdominec.github.io/googlesheet2scatterplot/?x=melting%20point&y=boiling%20point&c=period&xlog=1&ylog=1&fo1=(NOT%20USED)&fop=and&fo2=(NOT%20USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o">https://filipdominec.github.io/googlesheet2scatterplot/?x=melting%20point&y=boiling%20point&c=period&xlog=1&ylog=1&fo1=(NOT%20USED)&fop=and&fo2=(NOT%20USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o</a>
 
 It is similarly easy to show how thermal capacity per gram is almost inversely proportional to the atomic Z number. However, even here we can see some outliers, which is obviously related to the element's melting point (coded by colour).
 
-![example of thermal capacities by atomic weight, for solids only](docs/example_elements_thcap_by_Z.png)
+![example of thermal capacities by atomic weight, for solids only](./docs/example_elements_thcap_by_Z.png)
 <a href="https://filipdominec.github.io/googlesheet2scatterplot/?x=atomic%20weight&y=thermal%20capacity&c=melting%20point&xlog=1&ylog=1&fb1=boiling%20point&fo1=gt&fp1=400&fop=and&fo2=(NOT%20USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o">https://filipdominec.github.io/googlesheet2scatterplot/?x=atomic%20weight&y=thermal%20capacity&c=melting%20point&xlog=1&ylog=1&fb1=boiling%20point&fo1=gt&fp1=400&fop=and&fo2=(NOT%20USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o</a>
 
 Cloning & editing the Google sheets table you can fill it with your own column names, row names and data values. Then, using the [procedure described here](https://www.fzu.cz/~dominecf/xy/howto.html) the address bar for the plotting website can be generated that points the HTML website to the exported CSV data from Google sheets.
