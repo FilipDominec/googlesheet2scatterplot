@@ -3,53 +3,57 @@
 Among the most common graph types used in science are *scatter plots*, where individual points are placed into a two-coordinate plane. This project extracts data from a Google Sheet and displays them interactively on the screen as an interactive web page.  
 
 While any decent spreadsheet processor can generate a scatter plot, there are good reasons to use a HTML/JavaScript page for it. The purpose of this project is to make viewing the datasets interactive, collaborative and to add several features that are useful for laboratory sample management:
-* **Interactivity**: 
-* **Collaboration**: When the webpage 
-* **Special features**: 
+* **Interactivity**: One mouse click in the right menu changes the quantity determining the X,Y position of the points, or their colour.
+* **Collaboration**: When you add or change data in your google sheet, all your colleagues only have to refresh the page to see the changes. 
+* **Special features**: There are several features that further simplify the analysis, as described at the end of this page.
 
-In practice, datasets are often not limited to two parameters, which would nicely map to X and Y coordinates. Characterisation of samples e.g. in experimental physics can provide one with literally dozens of numbers for each sample!  potential (non)correlations are revealed depending on which two parameters are be represented by the X and Y axes. Office table processors can do this; but it is useful to switch the settings by a single click.
-
-Even more useful is make the plotting application an interactive web page, so that many people can edit and view the data. And this is not hard, as most of the work has already been done! Numerous libraries (e.g. Plotly in javascript) enable one to put interactive scatter plots into a website. Several websites allow one to store data for individual plots  (e. g. Google Spreadsheets). So this project offers nothing but a simple HTML+JavaScript page that works as a glue between the CSV data (exported from your Google Spreadsheet), and Plotly (that makes a nice graph).
-
-Note this gives you just a javascript page; all data are stored in your own Google spreadsheet, all plotting is done in your browser. You may open the index.html locally, or put it on your website for easier access online. Therefore, one HTML page running anywhere can be used for as many data tables as you wish. 
 
 ----
-
 # Example use for comparing the chemical elements
 
 To demonstrate how this project works, we provide 
 1. a dataset containing basic information on chemical elements. You can view it at the [google sheets here](https://docs.google.com/spreadsheets/d/1K4z2Up7PbC__3yXLqWTkNsnOSVtqYm4u6FtFCVmyTXw/edit?gid=0#gid=0). Of course you can make your own copy to add some new columns or new elements.
-2. An externally hosted website running this project and pointing to this table: [vzkt-xy online](https://www.fzu.cz/~dominecf/xy/?x=group&y=period&c=electronegativity&fo1=(NOT%20USED)&fop=and&fo2=(NOT%20USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o)
+2. A running main webpage from this project, which has to be opened with the hash enabling it to load the data from the table (see links below). 
 
-Using the latter link, we can then view the elements in the shape of the classical periodic table:
 
-![alt text](https://private-user-images.githubusercontent.com/511950/423478270-de83624a-96ea-4c0c-8185-174e7c586796.jpg?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDIyMTYxODAsIm5iZiI6MTc0MjIxNTg4MCwicGF0aCI6Ii81MTE5NTAvNDIzNDc4MjcwLWRlODM2MjRhLTk2ZWEtNGMwYy04MTg1LTE3NGU3YzU4Njc5Ni5qcGc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwMzE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDMxN1QxMjUxMjBaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1mY2NhNDJlNWEzNTczY2I4NjM4MWQyYjQ0YzYzMDU4YzdkYTU2YmMxZWQ2YWZlNDIxMzM3ZjFkOTNkYWQyZDAzJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.I0AMiSLapyXyLWdl-zjkfKFLFNuyJCvh6-ObG7x1fx8)
+Having assigned the period and group number in the periodic table to each element, the graph can arrange them to form an inverted periodic table as we know it.  
+![elements by row and column in the periodic table](docs/example_elements.png)
+<a href="https://filipdominec.github.io/googlesheet2scatterplot/?x=group&y=period&c=period&fo1=(NOT%20USED)&fop=and&fo2=(NOT%20USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o">https://filipdominec.github.io/googlesheet2scatterplot/?x=group&y=period&c=period&fo1=(NOT%20USED)&fop=and&fo2=(NOT%20USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o</a>
 
-And with different choices for the vertical and horizontal axes, as well as coloring, interesting correlations can be found:
+Depending on the data filled in the table, many interesting correlations can be interactively examined.
+For example, by two mouse clicks we can rearrange the elements to show how their boiling points are related to their melting points. We have also switched the X,Y axes to logarithmic scale. This nicely shows that monoatomic noble gases have their boiling/melting temperatures very close, lying on the graph diagonal (automatically added dashed line). For most elements the ratio about 1.5-1.8 %, whereas for alkaline metals and similar ones (Hg, Bi, Pb) form a line at about 300 %. There are some outliers like sublimating arsenic, or biatomic covalently bound liquid metal Gallium.  There is a lot of interesting physics to discuss (which is beyond the scope of this website).
 
-![alt text](https://private-user-images.githubusercontent.com/511950/423478271-4abc2a51-97c3-4082-84a4-6345c750d57e.jpg?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDIyMTYxODAsIm5iZiI6MTc0MjIxNTg4MCwicGF0aCI6Ii81MTE5NTAvNDIzNDc4MjcxLTRhYmMyYTUxLTk3YzMtNDA4Mi04NGE0LTYzNDVjNzUwZDU3ZS5qcGc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwMzE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDMxN1QxMjUxMjBaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT05ZTAxODU4YjRiYTg5ODhiOGViNmM1MDdkYzQ1ZDJjNDE5Mzg1ZTE0NDVjMzkzYjBiMzkzZjA0NDRkN2Q3NWUzJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.z_xgQfnTHFETznxjQ1D8fkmiBx8_XL6S81PC2ysg72g)
+![elements by boiling and melting point](docs/example_elements_by_boiling_melting.png)
+<a href="https://filipdominec.github.io/googlesheet2scatterplot/?x=melting%20point&y=boiling%20point&c=period&xlog=1&ylog=1&fo1=(NOT%20USED)&fop=and&fo2=(NOT%20USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o">https://filipdominec.github.io/googlesheet2scatterplot/?x=melting%20point&y=boiling%20point&c=period&xlog=1&ylog=1&fo1=(NOT%20USED)&fop=and&fo2=(NOT%20USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o</a>
 
-Cloning & editing the Google sheets table you can fill it with your own column names, row names and data values. Now using the [procedure described here](https://www.fzu.cz/~dominecf/xy/howto.html) the address bar for the plotting website can be generated that points the HTML website to the exported CSV data from Google sheets.
+It is similarly easy to show how thermal capacity per gram is almost inversely proportional to the atomic Z number. However, even here we can see some outliers, which is obviously related to the element's melting point (coded by colour).
+
+![example of thermal capacities by atomic weight, for solids only](docs/example_elements_thcap_by_Z.png)
+<a href="https://filipdominec.github.io/googlesheet2scatterplot/?x=atomic%20weight&y=thermal%20capacity&c=melting%20point&xlog=1&ylog=1&fb1=boiling%20point&fo1=gt&fp1=400&fop=and&fo2=(NOT%20USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o">https://filipdominec.github.io/googlesheet2scatterplot/?x=atomic%20weight&y=thermal%20capacity&c=melting%20point&xlog=1&ylog=1&fb1=boiling%20point&fo1=gt&fp1=400&fop=and&fo2=(NOT%20USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o</a>
+
+Cloning & editing the Google sheets table you can fill it with your own column names, row names and data values. Then, using the [procedure described here](https://www.fzu.cz/~dominecf/xy/howto.html) the address bar for the plotting website can be generated that points the HTML website to the exported CSV data from Google sheets.
 
 
 ----
 
 # Additional features of the plotting HTML page
 
-1. **Parameter grouping:** The first row of the table denotes the parameter group. Useful when there are over 20 parameters per point.
-1. **Point color as a third axis:** Rainbow scale can show  hidden higher-order correlation between points.
-1. **Point relations:** Every point may refer to another point as its parent, since samples in our laboratory are developed step by step, forming a large inheritance trees. The relations are displayed as arrows, optionally along with description of the relation. 
-1. **Filtering of data:** A simple filter can be applied to show only a subset of points.
-1. **Settings reflected in the address bar:** Copy the address bar to share your current axes/colours view.
+1. **Point color as a third axis:** Rainbow scale can show hidden higher-order correlations between points.
+1. **Point relations:** Every point may refer to another point as its parent, since samples in laboratories are typically developed step by step, forming a large inheritance tree. The relations are displayed as arrows, optionally along with a description of each relation. 
+1. **Filtering of data:** A simple filter can be applied to show only a subset of points. Two filtering rules are available and can be combined with logical "and"/"or" operand.
+1. **Settings are immediately reflected in the address bar:** Copy the address bar to share your current axes/colours settings with anybody whom you send this link.
+1. **Visual parameter grouping:** The first row of the table denotes the parameter group, which can be folded. This saves screen space when there are over 20-30 parameters per point.
+1. **Visual parameter highliting:** If you want to point out a new or otherwise interesting parameter (or group), just put an asterisk behind its name. It will be highlighted green.
 
 
 ----
 
 # Trying the script online
 
-The web page can be found at **https://www.fzu.cz/~dominecf/xy/?googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o&x=length&y=weight&c=maze%20solving**
+Note this project gives you just a javascript page; all data are stored in your own Google spreadsheet, all plotting is done in your browser. You may open the index.html locally, or put it on your website for easier access online. Therefore, one HTML page running anywhere can be used for as many data tables as you wish. 
+Pulling data from your google sheet as specified by your own ```googleid=``` parameter makes the website also safe even for confidential projects.
 
-The parameters provided after **?googleid=...** point to an example table. To plot useful data, make a copy of the underlying example table **https://docs.google.com/spreadsheets/d/1K4z2Up7PbC__3yXLqWTkNsnOSVtqYm4u6FtFCVmyTXw/edit#gid=0** and fill it according to your needs.  See **https://www.fzu.cz/~dominecf/xy/howto.html** for a step-by-step guide.
+To make plot your own data, make a copy of the underlying example table **https://docs.google.com/spreadsheets/d/1K4z2Up7PbC__3yXLqWTkNsnOSVtqYm4u6FtFCVmyTXw/edit#gid=0** and fill it according to your needs.  See **https://www.fzu.cz/~dominecf/** for a step-by-step guide how to generate a corresponding ```googleid=``` parameter.
 
-If you wish to be independent of my website, simply get the files and put them somewhere accessible to your browser - the plotting web page should work also locally. Then open ```index.html``` with a proper pointer to the exported CSV table in the address. You don't need to edit the sources if you just fill in your data; but contributions to this project are welcome. 
+If you wish to be independent of the website, e.g., for Javascript development, simply clone this project's files and put them somewhere accessible to your browser - the plotting web page should work even locally. You don't need to edit the sources if you just fill in your data; but contributions to this project are welcome. 
 

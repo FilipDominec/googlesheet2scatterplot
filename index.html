@@ -107,7 +107,7 @@
 </tr>
 </table>
 
-<center> <b> Google sheet for Plotly</b>, updated 2025-06-14<br> (c) Filip Dominec (2018-2025) using Javascript, HTML, <a href="https://plot.ly">Plotly</a> and <a href="https://docs.google.com/spreadsheets">google documents</a></br> To share your choice of axes and colors, copy the full path from your address bar.<br> To edit the data, ask for permissions the author of the underlying Google spreadsheet. <br> To make a new plot of your own data, <b><a href='./docs/howto.html'>follow the howto</a></b>. <br> To contribute to the source code, see the git repository at <a href="https://github.com/FilipDominec/googlesheet2scatterplot">https://github.com/FilipDominec/googlesheet2scatterplot</a>.  </center> 
+<center> <b> Google sheet for Plotly</b>, updated 2025-06-14<br> (c) Filip Dominec (2018-2025) using Javascript, HTML, <a href="https://plot.ly">Plotly</a> and <a href="https://docs.google.com/spreadsheets">google documents</a></br> To share your choice of axes and colors, copy the full path from your address bar.<br> To edit the data, ask the author of the underlying Google spreadsheet for access and permissions. <br> To make a new plot of your own data, <b><a href='./docs/howto.html'>follow the howto</a></b>. <br> To contribute to the source code, see the git repository at <a href="https://github.com/FilipDominec/googlesheet2scatterplot">https://github.com/FilipDominec/googlesheet2scatterplot</a>.  </center> 
 <script>
 
 
@@ -241,6 +241,8 @@ for (key in alldata) {
 		addradio('X axis parameter',	  sectname, key, url.searchParams.get("x"), note[key]);
 		addradio('Y axis parameter',	  sectname, key, url.searchParams.get("y"), note[key]);
 		addradio('Color-coded parameter', sectname, key, url.searchParams.get("c"), note[key]);
+		// TODO: if url.searchParams.get("c") not found in any of keys, report this as error, prompting the 
+		//    user to pick a new value to see data points
 		addcomboitem('cmbFilterBy1', key, false);
 		addcomboitem('cmbFilterBy2', key, false);
 	}
