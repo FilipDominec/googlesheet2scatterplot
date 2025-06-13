@@ -10,9 +10,9 @@
 <script src="csvToArray.js"></script>
 <link rel="shortcut icon" href="favicon.png">
 
-<title>gsheet2plotly</title>
+<title>googlesheet2plotly</title>
 <style type="text/css"> 
-	body  { font-family: sans; background:silver; }
+	body  { font-family: sans; background:grey; }
 	td  { border:2px solid gray; padding:4px;  border-radius:10px; background:white; }
 	td.cs  { border:0; padding:1px; font-size:80%; text-align:center; width=20percent;}
 	input { vertical-align:middle;  margin: -1px 0px; } 
@@ -33,7 +33,7 @@
 </head>
 
 <body>
-<center><div id="display">gsheet2plotly initializing...</div></center>
+<center><div id="display">googlesheet2plotly initializing...</div></center>
 
 <table align="center">
 <tr>
@@ -107,7 +107,7 @@
 </tr>
 </table>
 
-<center> <b> Google sheet for Plotly</b>, updated 2022-11-01 (c) Filip Dominec (2018-2022) using javascript, HTML, the great <a href="https://plot.ly">Plotly</a> library and <a href="https://docs.google.com/spreadsheets">google documents</a></br> To share your choice of axes and colors, copy the full path from your address bar.<br> To edit the data, ask for editing permissions for the underlying Google spreadsheet. <br> To make a new plot of your own data, <b><a href='./docs/howto.html'>follow the howto</a></b>. To contribute to the source code, see git repository at <a href="https://bitbucket.org/fdominec/gsheet2plotly/">https://bitbucket.org/fdominec/gsheet2plotly/</a>.  </center> 
+<center> <b> Google sheet for Plotly</b>, updated 2025-06-14<br> (c) Filip Dominec (2018-2025) using Javascript, HTML, <a href="https://plot.ly">Plotly</a> and <a href="https://docs.google.com/spreadsheets">google documents</a></br> To share your choice of axes and colors, copy the full path from your address bar.<br> To edit the data, ask for permissions the author of the underlying Google spreadsheet. <br> To make a new plot of your own data, <b><a href='./docs/howto.html'>follow the howto</a></b>. <br> To contribute to the source code, see the git repository at <a href="https://github.com/FilipDominec/googlesheet2scatterplot">https://github.com/FilipDominec/googlesheet2scatterplot</a>.  </center> 
 <script>
 
 
@@ -139,7 +139,7 @@ xmlhttp.onreadystatechange = function () {
 xmlhttp.open("GET", csvurl, false);
 xmlhttp.send(null);				
 if (googleid==null)
-	document.getElementById("display").innerHTML = 'Error: Missing the google ID of the data spreadsheet. No data to show.<br> To start a new plot of your data <b><a href="./howto.html">follow the howto</a></b>' 
+	document.getElementById("display").innerHTML = 'Error: Missing the parameter with hash of the data source. No data to show.<br> As an example, we have prepared a <b><a href="">sample spreadsheet of elements and generated a link to an <b><a href="https://filipdominec.github.io/googlesheet2scatterplot/?x=group&y=period&c=electronegativity&fo1=(NOT USED)&fop=and&fo2=(NOT USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o">their visualisation</a></b>. <br> To start a new table with your own data, please <b><a href="./docs/howto.html">follow the howto</a></b>.' 
 else
 	document.getElementById("display").innerHTML = '' ;
 
