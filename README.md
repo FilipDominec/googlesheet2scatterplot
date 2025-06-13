@@ -2,11 +2,10 @@
 
 Among the most common graph types used in science are *scatter plots*, where individual points are placed into a two-coordinate plane. This project extracts data from a Google Sheet and displays them interactively on the screen as an interactive web page.  
 
-Any decent spreadsheet processor can generate a scatter plot, but there are good reasons to use a HTML/JavaScript page for it. The purpose of this project is to make viewing the datasets interactive, collaborative and to add several features that are useful for laboratory sample management:
+While any decent spreadsheet processor can generate a scatter plot, there are good reasons to use a HTML/JavaScript page for it. The purpose of this project is to make viewing the datasets interactive, collaborative and to add several features that are useful for laboratory sample management:
 * **Interactivity**: 
 * **Collaboration**: When the webpage 
 * **Special features**: 
-
 
 In practice, datasets are often not limited to two parameters, which would nicely map to X and Y coordinates. Characterisation of samples e.g. in experimental physics can provide one with literally dozens of numbers for each sample!  potential (non)correlations are revealed depending on which two parameters are be represented by the X and Y axes. Office table processors can do this; but it is useful to switch the settings by a single click.
 
