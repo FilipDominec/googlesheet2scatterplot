@@ -60,21 +60,23 @@ To get an editable sheet for your own data, make a copy of the underlying exampl
 ![](docs/copy_gs.png)
 
 <small>
-<small><small>
-Note that the Javascript code expects a certain cell structure of the sheet - but if you made a copy of the example Google sheet, it is intuitive to adapt it to your own column names (for measurement types), row names (for samples) and corresponding data values. 
 
-Part of the sheet | Cells | Content
------------------ | ----- | -------
-First row | E1, F1, G1... | *may* be the categories to sort the sample parameters. Non-empty entries start a new category to which further columns to the right belong until another category starts.
-Second row | E2, F2, G2... | *must* be parameters
-Third row | E3, F3, G3... | *may* be physical units, measurement conditions or any other information related to the column. When the units are detected the same on X and Y axes, a diagonal line is automatically added as a guide for the eye.
-First column | A4, A5...  | must be unique names of the samples. The name of the first column in cell A2 ```sample ID```.
-Third column | |  *may* contain references to the parent sample's ID, this column's name in cell C2 is ```parent ID```
-Fourth column | |  *may* contain text describing the difference from the parent sample's ID, this column's name in cell D2 is ```what changed```
-Remaining  | |  cells contain arbitrary numbers or text (which cannot be numerically represented, but can be useful for sample filtering). equations referring Note that the table can be "sparse", i.e., missing data values in certain cells are not a problem. 
+> [!TIP]
+> Optional information to help a user be more successful.
+> Note that the Javascript code expects a certain cell structure of the sheet - but if you made a copy of the example Google sheet, it is intuitive to adapt it to your own column names (for measurement types), row names (for samples) and corresponding data values. 
 
-The first sheet (i.e. tab) of the document must follow this format, but further sheets *may* be added and will be ignored by the web page. Also any graphical formatting of the sheet cells is ignored, you may e.g. use coloring freely. 
-</small></small>
+> Part of the sheet | Cells | Content
+> ----------------- | ----- | -------
+> First row | E1, F1, G1... | *may* be the categories to sort the sample parameters. Non-empty entries start a new category to which further columns to the right belong until another category starts.
+> Second row | E2, F2, G2... | *must* be parameters
+> Third row | E3, F3, G3... | *may* be physical units, measurement conditions or any other information related to the column. When the units are detected the same on X and Y axes, a diagonal line is automatically added as a guide for the eye.
+> First column | A4, A5...  | must be unique names of the samples. The name of the first column in cell A2 ```sample ID```.
+> Third column | |  *may* contain references to the parent sample's ID, this column's name in cell C2 is ```parent ID```
+> Fourth column | |  *may* contain text describing the difference from the parent sample's ID, this column's name in cell D2 is ```what changed```
+> Remaining  | |  cells contain arbitrary numbers or text (which cannot be numerically represented, but can be useful for sample filtering). equations referring Note that the table can be "sparse", i.e., missing data values in certain cells are not a problem. 
+> 
+> The first sheet (i.e. tab) of the document must follow this format, but further sheets *may* be added and will be ignored by the web page. Also any graphical formatting of the sheet cells is ignored, you may e.g. use coloring freely. 
+> 
 </small>
 
 ## Generating the googleID hash
