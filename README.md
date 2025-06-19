@@ -60,7 +60,7 @@ To get an editable sheet for your own data, make a copy of the underlying exampl
 ![](docs/copy_gs.png)
 
 <small>
-<sub><sup>
+<small><small>
 Note that the Javascript code expects a certain cell structure of the sheet - but if you made a copy of the example Google sheet, it is intuitive to adapt it to your own column names (for measurement types), row names (for samples) and corresponding data values. 
 
 Part of the sheet | Cells | Content
@@ -74,8 +74,9 @@ Fourth column | |  *may* contain text describing the difference from the parent 
 Remaining  | |  cells contain arbitrary numbers or text (which cannot be numerically represented, but can be useful for sample filtering). equations referring Note that the table can be "sparse", i.e., missing data values in certain cells are not a problem. 
 
 The first sheet (i.e. tab) of the document must follow this format, but further sheets *may* be added and will be ignored by the web page. Also any graphical formatting of the sheet cells is ignored, you may e.g. use coloring freely. 
+</small></small>
 </small>
-</sub></sup>
+
 ## Generating the googleID hash
 
 The Javascript page uses the URL parameter ```googleid=```  to load the data in CSV format from Google. These data are only only stored in the memory of your browser and after some filtering and preprocessing it calls the Plotly.js library to plot them.
