@@ -10,7 +10,7 @@
 <script src="csvToArray.js"></script>
 <link rel="shortcut icon" href="favicon.png">
 
-<title>googlesheet2plotly</title>
+<title>googlesheet2scatterplot</title>
 <style type="text/css"> 
 	body  { font-family: sans; background:grey; }
 	td  { border:2px solid gray; padding:4px;  border-radius:10px; background:white; }
@@ -33,7 +33,7 @@
 </head>
 
 <body>
-<center><div id="display">googlesheet2plotly initializing...</div></center>
+<center><div id="display">googlesheet2scatterplot initializing...</div></center>
 
 <table align="center">
 <tr>
@@ -107,7 +107,7 @@
 </tr>
 </table>
 
-<center> <b> googlesheet2plotly</b>, updated 2025-06-16<br> (c) Filip Dominec (2018-2025) using Javascript, HTML, <a href="https://plot.ly">Plotly</a> and <a href="https://docs.google.com/spreadsheets">google documents</a></br> To share your choice of axes and colors, copy the full path from your address bar.<br> To edit the data, ask the author of the underlying Google spreadsheet for access and permissions. <br> To make a new plot of your own data, <b><a href='./docs/howto.html'>follow the howto</a></b>. <br> To report an error or contribute, see the git repository at <b><a href="https://github.com/FilipDominec/googlesheet2scatterplot">https://github.com/FilipDominec/googlesheet2scatterplot</a><b>.  </center> 
+<center> <b> googlesheet2scatterplot</b>, updated 2025-06-16<br> (c) Filip Dominec (2018-2025) using Javascript, HTML, <a href="https://plot.ly">Plotly</a> and <a href="https://docs.google.com/spreadsheets">google documents</a></br> To share your choice of axes and colors, copy the full path from your address bar.<br> To edit the data, ask the author of the underlying Google spreadsheet for access and permissions. <br> To make a new plot of your own data, <b><a href='./docs/howto.html'>follow the howto</a></b>. <br> To report an error or contribute, see the git repository at <b><a href="https://github.com/FilipDominec/googlesheet2scatterplot">https://github.com/FilipDominec/googlesheet2scatterplot</a><b>.  </center> 
 <script>
 
 
@@ -121,7 +121,7 @@ var googleid = url.searchParams.get("googleid");
 //window.googleDocCallback = function () { return true; }; // might help with cross-site troubles?
 //var csvurl = proxy + 'https://docs.google.com/spreadsheets/d/e/' + googleid + '/pub?output=csv&range=A1:ZZ9999&callback=googleDocCallback';
 var csvurl = 'https://docs.google.com/spreadsheets/d/e/' + googleid + '/pub?output=csv&range=A1:ZZ9999'; // XXX
-document.getElementById("display").innerHTML = 'gsheet2plotly waiting to receive data from Google spreadsheet address:<br><small>'+ csvurl + '</small>';
+document.getElementById("display").innerHTML = 'gsheet2scatterplot waiting to receive data from Google spreadsheet address:<br><small>'+ csvurl + '</small>';
 
 
 var raw_text_table = '(no table loaded yet)';
