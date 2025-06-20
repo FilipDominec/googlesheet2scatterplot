@@ -54,7 +54,7 @@ The core of this project is just a HTML/Javascript page, named **index.html**.
 
 Therefore, the **index.html** page hosted by Github can be used for as many datasets as you wish, each of which will have its own ```googleid=``` parameter. (Alternately, you are also free to download and run this project locally, but unless you want to develop the HTML/Javascript code, there is no reason not to use this single online instance.)
 
-## Copying the table 
+## Preparing your Google Sheet
 
 To get an editable sheet for your own data, make a copy of the underlying example table **https://docs.google.com/spreadsheets/d/1K4z2Up7PbC__3yXLqWTkNsnOSVtqYm4u6FtFCVmyTXw/edit#gid=0** and fill it according to your needs. Click *File -> Make a Copy* in the main menu, then confirm the button *Make a Copy*. Rename it as you wish.
 ![](docs/copy_gs.png)
