@@ -1,23 +1,19 @@
 # googlesheet2scatterplot 
 
-Among the most common graph types used in science are *scatter plots*, where individual points are placed into a two-coordinate plane. This project extracts data from a Google Sheet and displays them interactively on the screen as an interactive web page.  
+Among the most common graph types used in science are *scatter plots*, where individual points are placed into a two-coordinate plane. 
 
-While any decent spreadsheet processor can generate a scatter plot, there are good reasons to use a HTML/JavaScript page for it. The purpose of this project is to make viewing the datasets interactive, collaborative and to add several features that are useful for laboratory sample management:
+While any decent spreadsheet processor can generate a scatter plot, there are good reasons to use a HTML/JavaScript page for it. 
+
+The main purpose of this project is to pull data from Google Sheets and visualise them in an interactive way. It has several features that are particularly useful for laboratory sample management:
 * **Interactivity**: One mouse click in the right menu changes the quantity determining the X,Y position of the points, or their colour.
-* **Collaboration**: When you add or change data in your google sheet, all your colleagues only have to refresh the page to see the changes. 
-* **Special features**: There are several features that further simplify the analysis, as described at the end of this page.
-
-
-----
-
-# Additional features of the plotting HTML page
-
-1. **Point color as a third axis:** Rainbow scale can show point grouping, or reveal their hidden higher-order correlations. Points with no valid data for color are plotted dark grey.
-1. **Point relations:** Every point may refer to another point as its parent, since samples in laboratories are typically developed step by step, forming a large inheritance tree. The relations are displayed as arrows, optionally along with a description of each relation. 
-1. **Filtering of data:** A simple filter can be applied to show only a subset of points. Two filtering rules are available and can be combined with logical "and"/"or" operand.
-1. **Settings are immediately reflected in the address bar:** Copy the URL to share your current axes/colours settings with anybody whom you send this link.
-1. **Visual parameter grouping:** The first row of the table denotes the parameter group, which can be folded. This saves screen space when there are over 20-30 parameters per point.
-1. **Visual parameter highliting:** If you want to point out a new or otherwise interesting parameter (or group), just put an asterisk behind its name. It will be highlighted green.
+* **Collaboration**: When you add or change data in your Google Sheet, all your colleagues only have to refresh the page to see the changes. 
+* Special features: There are several features that further simplify the analysis, as demonstrated in the example below.
+   * **Color as a third axis:** Rainbow scale can represent point grouping, or reveal their hidden higher-order correlations. Points with no valid data for color are plotted dark grey.
+   * **Point relations:** Every point may refer to another point as its parent, since samples in laboratories are typically developed step by step, forming a large inheritance tree. The relations are displayed as arrows, optionally along with a description of each relation. 
+   * **Filtering of data:** A simple filter can be applied to show only a subset of points. Two filtering rules are available and can be combined with logical "and"/"or" operand.
+   * **Settings are immediately reflected in the address bar:** Copy the URL to share your current axes/colours settings with anybody whom you send this link.
+   * **Visual parameter grouping:** The first row of the table denotes the parameter group, which can be folded. This saves screen space when there are over 20-30 parameters per point.
+   * **Visual parameter highliting:** If you want to point out a new or otherwise interesting parameter (or group), just put an asterisk behind its name. It will be highlighted green.
 
 
 ----
@@ -48,7 +44,7 @@ It is similarly easy to show how thermal capacity per gram is almost inversely p
 # Making your own Google Sheets with data
 
 The core of this project is just a HTML/Javascript page, named **index.html**. All data are stored in a Google spreadsheet and all plotting is done in your browser.
-Therefore, the **index.html** page can be used for as many data tables as you wish. You are also free to download and run this project locally, but as long as Github supports hosting the page linked above in the examples, there is no reason not to use this online instance. 
+Therefore, the **index.html** page can be used for as many data tables as you wish. You are also free to download and run this project locally, but as long as Github supports hosting the page linked above in the examples, there is no reason not to use this online instance, only with different parameters. 
 
 However, to plot your own data, you will have to create own sheet. There is a certain format the sheet has to obey. It is easiest to make a copy of the example Google sheet to fill it with your own column names (for measurement types), row names (for samples) and corresponding data values. Note that the table can be "sparse", i.e., missing data values in certain cells are not a problem. 
 
@@ -58,7 +54,7 @@ To make a plot your own data, make a copy of the underlying example table **http
 
 # Installation
 
-The visualisation runs online. If you can see open examples, you don't have to install anything!
+The visualisation runs online. If you can see the interactive examples linked above, you don't have to install anything!
 
 
 ----
