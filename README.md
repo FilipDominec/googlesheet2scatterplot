@@ -39,25 +39,40 @@ It is similarly easy to show how thermal capacity per gram is almost inversely p
 ![example of thermal capacities by atomic weight, for solids only](./docs/example_elements_thcap_by_Z.png)
 <a href="https://filipdominec.github.io/googlesheet2scatterplot/?x=atomic%20weight&y=thermal%20capacity&c=melting%20point&xlog=1&ylog=1&fb1=boiling%20point&fo1=gt&fp1=400&fop=and&fo2=(NOT%20USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o">Try the interactive plot of thermal capacity by Z number</a>
 
+----
+
+# Installation
+
+The visualisation runs as a page in your web browser and Github has provided hosting for it. If you can see the examples online, you don't have to install anything!
+
+To get your own data table you will need to make a Google account if you haven't it yet.
+
+You will only need to install additional python modules if you wish to automate your work and upload data by Google API. The installation steps are described at the end of this document. You will also have to use your Google account to generate a token in order to allow your scripts to upload data without asking for a password. 
 
 ----
 
-# Making your own Google Sheet with data
+# Preparing another Google Sheet for your own data
 
-The core of this project is just a HTML/Javascript page, named **index.html**. 
+The core of this project is one HTML/Javascript page, named **index.html**. 
 
-**Each dataset to be plotted is stored in separate Google spreadsheet.**
+Each dataset to be plotted is stored in separate Google spreadsheet. 
 
-Therefore, the **index.html** page already linked in the above examples can be used for as many datasets as you wish, each of which will have its own ```googleid=``` parameter. (Alternately, you are also free to download and run this project locally, but unless you want to develop the HTML/Javascript code, there is no reason not to use this single online instance.)
+Therefore, the **index.html** page already linked in the above examples can be used for as many datasets as you wish, each of which will have a different ```googleid=``` parameter. Alternately, you are also free to download and open (or self-host) this page locally, but unless you want to develop the HTML/Javascript code, there is no reason not to use this single online instance.
 
 ## Preparing your Google Sheet
 
 To get an editable sheet for your own data, make a copy of the underlying example table **https://docs.google.com/spreadsheets/d/1K4z2Up7PbC__3yXLqWTkNsnOSVtqYm4u6FtFCVmyTXw/edit#gid=0** and fill it according to your needs. Click *File -> Make a Copy* in the main menu, then confirm the button *Make a Copy*. Rename it as you wish.
 ![](docs/copy_gs.png)
 
-<div class="tip">
+> [!NOTE]
+> Note that the Javascript code expects a certain cell structure of the sheet. For completeness, we list the rules in the following table. 
+>
+> But if you made a copy of the example Google sheet, it is intuitive to adapt it to your needs without reading it; just insert your own column names (for measurement types), row names (for samples) and corresponding data values. At any rate you will need to generate a new `googleid` for it as described in the next subsection.
 
-Note that the Javascript code expects a certain cell structure of the sheet - but if you made a copy of the example Google sheet, it is intuitive to adapt it to your own column names (for measurement types), row names (for samples) and corresponding data values. 
+<details>
+  <summary><ins>Description of the required Google Sheet structure</ins></summary>
+
+The first sheet (i.e. tab) of the document must follow this format, but further sheets *may* be added and will be ignored by the web page. Also any graphical formatting of the sheet cells is ignored, you may e.g. use coloring freely. 
 
 Part of the sheet | Cells | Content
 ----------------- | ----- | -------
@@ -69,24 +84,42 @@ Third column | |  *may* contain references to the parent sample's ID, this colum
 Fourth column | |  *may* contain text describing the difference from the parent sample's ID, this column's name in cell D2 is ```what changed```
 Remaining  | |  cells contain arbitrary numbers or text (which cannot be numerically represented, but can be useful for sample filtering). equations referring Note that the table can be "sparse", i.e., missing data values in certain cells are not a problem. 
 
-The first sheet (i.e. tab) of the document must follow this format, but further sheets *may* be added and will be ignored by the web page. Also any graphical formatting of the sheet cells is ignored, you may e.g. use coloring freely. 
+</details>
 
-</div>
+## Generating the `googleID` hash
 
-## Generating the googleID hash
+The Javascript page uses the URL parameter ```googleid=```  to download the data in from Google. These exported data are stored only locally and after some filtering and preprocessing, the Plotly.js library is used to plot them in your browser. We thus have to ask Google to generate the secret key that allows your browser to access the exported data, and pass it to the index.html page as an URL parameter. 
 
-The Javascript page uses the URL parameter ```googleid=```  to load the data in CSV format from Google. These data are only only stored in the memory of your browser and after some filtering and preprocessing it calls the Plotly.js library to plot them.
+With the Google Sheets opened in the browser, select the option *File -> Share -> Publish to Web* in the main menu.
+
+A form appears where you have to stay on the *Link* tab, and select that *Entire document* shall be exported as *Comma-separated values (.csv)*: 
+
+![the Google's form "Publish to the web"](docs/publish_form.png)
+
+## Composing an URL with the new googleID
+
+Below, the form shows a quite long URL. It contains the required ```googleid``` hash that only has to be copied into the URL for the index.html. For example, if you get: 
+
+```
+ https://docs.google.com/spreadsheets/d/e/2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o/pub?output=csv
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+```
+
+Copy the ```2PACX........-o``` part (130 bytes long) after the URL of our plotting page:
+
+```
+ https://filipdominec.github.io/googlesheet2scatterplot/?googleid=
+```
+
+... so that you get for example: 
+
+```
+ https://filipdominec.github.io/googlesheet2scatterplot/?googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o
+```
+
+This is the link you need to open to see your data.
 
 
-## Setting up an URL with the new googleID
-
-----
-
-# Installation
-
-The visualisation runs as a page in your web browser and Github has provided hosting for it. If you can see the examples online, you don't have to install anything!
-
-The only exception is if you wish to automate your work and upload data by Google API. The installation steps are described below. You will also have to make a Google account and generate a token in order to allow your scripts to upload data. 
 
 ----
 
