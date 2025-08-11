@@ -139,7 +139,7 @@ xmlhttp.onreadystatechange = function () {
 xmlhttp.open("GET", csvurl, false);
 xmlhttp.send(null);				
 if (googleid==null)
-	document.getElementById("display").innerHTML = 'Error: Missing the parameter with hash of the data source. No data to show.<br> As an example, we have prepared a <b><a href="">sample spreadsheet of elements and generated a link to an <b><a href="https://filipdominec.github.io/googlesheet2scatterplot/?x=group&y=period&c=electronegativity&fo1=(NOT USED)&fop=and&fo2=(NOT USED)&googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o">their visualisation</a></b>. <br> To start a new table with your own data, please <b><a href="./docs/howto.html">follow the howto</a></b>.' 
+	document.getElementById("display").innerHTML = 'Error: Missing the parameter with hash of the data source. No data to show.<br> For instructions and examples, please refer to  <b><a href="https://github.com/FilipDominec/googlesheet2scatterplot">the googlesheet2scatterplot project on Github</a></b>. 
 else
 	document.getElementById("display").innerHTML = '' ;
 

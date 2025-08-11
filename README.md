@@ -76,12 +76,13 @@ The first sheet (i.e. tab) of the document must follow this format, but further 
 
 Part of the sheet | Cells | Content
 ----------------- | ----- | -------
-First row | E1, F1, G1... | *may* be the categories to sort the sample parameters. Non-empty entries start a new category to which further columns to the right belong until another category starts.
-Second row | E2, F2, G2... | *must* be parameters
-Third row | E3, F3, G3... | *may* be physical units, measurement conditions or any other information related to the column. When the units are detected the same on X and Y axes, a diagonal line is automatically added as a guide for the eye.
+First row | E1, F1, G1... | contains the categories to sort the sample parameters; empty cells are the same category as the closest non-empty cell to the left. Non-empty entries start a new category to which further columns to the right belong until another category starts.
+Second row | E2, F2, G2... | contains the parameter names that will be used to. They must be unique and preferably short.
+Third row | E3, F3, G3... | optionally contains further info for each parameter. These can contain the physical unit, measurement conditions or any other information related to the column. When the units are detected the same on X and Y axes, a diagonal line is automatically added as a guide for the eye.
 First column | A4, A5...  | must be unique names of the samples. The name of the first column in cell A2 ```sample ID```.
-Third column | |  *may* contain references to the parent sample's ID, this column's name in cell C2 is ```parent ID```
-Fourth column | |  *may* contain text describing the difference from the parent sample's ID, this column's name in cell D2 is ```what changed```
+Second column | B4, B5...  | must be unique names of the samples. The name of the first column in cell A2 ```sample ID```.
+Third column | C4, C5... |  *may* contain references to the parent sample's ID, this column's name in cell C2 is ```parent ID```
+Fourth column | D4, D5 |  *may* contain text describing the difference from the parent sample's ID, this column's name in cell D2 is ```what changed```
 Remaining  | |  cells contain arbitrary numbers or text (which cannot be numerically represented, but can be useful for sample filtering). equations referring Note that the table can be "sparse", i.e., missing data values in certain cells are not a problem. 
 
 </details>
@@ -117,7 +118,11 @@ Copy the ```2PACX........-o``` part (130 bytes long) after the URL of our plotti
  https://filipdominec.github.io/googlesheet2scatterplot/?googleid=2PACX-1vRZbVmg68lEl8VS9DGa1rEDS5-V55Ome6JXc6Cs4UuGhAYUgHHZw1x1_f9AbvHlyDL8GmzRVxli0W-o
 ```
 
-This is the link you need to open to see your data.
+Opening this link you will probably see an empty plot, which however already has loaded all data for plotting. You can select the data columns which you wish to be used for the x-axis, y-axis and point coloring. You may also enable the inheritance arrows.
+
+To share the view with your friends and colleagues, copy the long text from the address bar, which now conveys the information about the choice of axes. This makes the URL even longer. 
+
+You may also save this link into your table's cell C3, so that you never have to search for it in your bookmarks/emails. 
 
 
 
