@@ -14,7 +14,7 @@
 
 <title>googlesheet2scatterplot</title>
 <style type="text/css"> 
-	body  { font-family: sans; background:blue; }
+	body  { font-family: sans; background:green; }
 	td  { border:2px solid gray; padding:4px;  border-radius:10px; background:white; }
 	td.cs  { border:0; padding:1px; font-size:80%; text-align:center; width=20percent;}
 	input { vertical-align:middle;  margin: -1px 0px; } 
@@ -464,11 +464,11 @@ function axes_update() {
 	// Prepare axes labels to be updated
 	xunit = note[new_x_param].slice(note[new_x_param].indexOf('(')+1, note[new_x_param].indexOf(')'))
 	if (xunit != '') {xunit = " (" + xunit + ")"; }
-    layout.xaxis = {title: new_x_param + xunit};
+    layout.xaxis.title = {text: new_x_param + xunit};
 
 	yunit = note[new_y_param].slice(note[new_y_param].indexOf('(')+1, note[new_y_param].indexOf(')'))
 	if (yunit != '') {yunit = " (" + yunit + ")"; }
-    layout.yaxis = {text: new_y_param + yunit};
+    layout.yaxis.title = {text: new_y_param + yunit};
 
 	cunit = note[new_c_param].slice(note[new_c_param].indexOf('(')+1, note[new_c_param].indexOf(')'))
 	console.log("C-UNIT ", new_c_param, cunit)
