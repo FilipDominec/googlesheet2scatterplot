@@ -2,9 +2,9 @@
 <head>
 <meta charset="UTF-8"> 
 
-<script src="https://cdn.plot.ly/plotly-1.58.0.js" charset="utf-8"></script>
-<!-- 
 <script src="https://cdn.plot.ly/plotly-3.1.0.js" charset="utf-8"></script>
+<!-- 
+<script src="https://cdn.plot.ly/plotly-1.58.0.js" charset="utf-8"></script>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>     ... this is obsolete, may not work anymore -->
 <!--
 <script src="plotly-latest.min.js"></script> --> <!-- Optional: For speedup, you can download plotly directly to this directory - and uncomment  --> 
@@ -14,7 +14,7 @@
 
 <title>googlesheet2scatterplot</title>
 <style type="text/css"> 
-	body  { font-family: sans; background:grey; }
+	body  { font-family: sans; background:blue; }
 	td  { border:2px solid gray; padding:4px;  border-radius:10px; background:white; }
 	td.cs  { border:0; padding:1px; font-size:80%; text-align:center; width=20percent;}
 	input { vertical-align:middle;  margin: -1px 0px; } 
@@ -468,7 +468,7 @@ function axes_update() {
 
 	yunit = note[new_y_param].slice(note[new_y_param].indexOf('(')+1, note[new_y_param].indexOf(')'))
 	if (yunit != '') {yunit = " (" + yunit + ")"; }
-    layout.yaxis = {title: new_y_param + yunit};
+    layout.yaxis = {text: new_y_param + yunit};
 
 	cunit = note[new_c_param].slice(note[new_c_param].indexOf('(')+1, note[new_c_param].indexOf(')'))
 	console.log("C-UNIT ", new_c_param, cunit)
